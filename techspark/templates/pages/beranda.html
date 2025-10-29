@@ -1,0 +1,67 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+
+{% block title %}TechSpark - Beranda{% endblock %}
+
+{% block content %}
+
+    <section class="hero" id="beranda">
+        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=2000&q=80" alt="Hero" class="hero-bg">
+        <div class="hero-content">
+            <h1>Teknologi Terkini untuk Hidup Modern</h1>
+            <p>Temukan gadget dan elektronik premium dengan harga terbaik. Kualitas terjamin, pengiriman cepat.</p>
+            <div class="hero-buttons">
+                <a href="{% url 'product_list' %}" class="btn btn-primary">Belanja Sekarang</a>
+                <a href="#kategori" class="btn btn-secondary">Lihat Katalog</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container" id="kategori">
+        <h2 class="section-title">Belanja Berdasarkan Kategori</h2>
+        <div class="categories">
+            <div class="category-card">
+                <div class="category-icon">💻</div>
+                <h3>Laptop</h3>
+                <p>Performa tinggi untuk kerja & gaming</p>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">📱</div>
+                <h3>Smartphone</h3>
+                <p>Teknologi mobile terdepan</p>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🎧</div>
+                <h3>Audio</h3>
+                <p>Kualitas suara premium</p>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">📷</div>
+                <h3>Kamera</h3>
+                <p>Abadikan momen terbaik</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="produk">
+        <h2 class="section-title">Produk Pilihan</h2>
+        <div class="products" id="products-container">
+            </div>
+        
+        <div class="section-cta">
+            <a href="{% url 'product_list' %}" class="btn btn-secondary">Lihat Semua Produk</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="newsletter">
+            <h2>Dapatkan Penawaran Terbaru</h2>
+            <p>Daftar newsletter dan dapatkan diskon hingga 30% untuk pembelian pertama!</p>
+            <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                <input type="email" placeholder="Masukkan email Anda" required>
+                <button type="submit" class="btn btn-primary">Subscribe</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

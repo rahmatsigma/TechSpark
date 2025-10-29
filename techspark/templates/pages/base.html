@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>{% block title %}TechSpark - Toko Elektronik Premium{% endblock %}</title>
+    
+    <meta name="description" content="Temukan elektronik terkini di TechSpark. Belanja laptop, smartphone, audio, dan kamera dengan kualitas premium dan harga terbaik.">
+    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">⚡ TechSpark</a>
+            
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Beranda</a></li>
+                <li><a href="{% url 'product_list' %}">Produk</a></li>
+                <li><a href="#kategori">Kategori</a></li>
+                <li><a href="#kontak">Kontak</a></li>
+            </ul>
+            <div class="nav-icons">
+                <button onclick="alert('Fitur pencarian segera hadir!')">🔍</button>
+                <button onclick="showCart()">🛒 <span id="cart-count">0</span></button>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+
+    <footer id="kontak">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>TechSpark</h3>
+                <p>Toko elektronik terpercaya sejak 2024. Menyediakan produk berkualitas dengan harga terbaik.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Belanja</h3>
+                <ul>
+                    <li><a href="{% url 'product_list' %}">Produk Terbaru</a></li>
+                    <li><a href="#kategori">Kategori</a></li>
+                    <li><a href="#">Promo</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Dukungan</h3>
+                <ul>
+                    <li><a href="#">Hubungi Kami</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Ikuti Kami</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TechSpark. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

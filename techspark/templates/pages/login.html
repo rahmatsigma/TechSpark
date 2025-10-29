@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TechSpark</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>TechSpark</h1>
+            <p>Masuk ke akun Anda</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        {% if messages %}
+            <div style="margin-bottom: 20px;">
+            {% for message in messages %}
+                <div class="message-box {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}" style="
+                    padding: 12px; 
+                    border-radius: 8px; 
+                    color: #fff; 
+                    font-weight: 500;
+                    text-align: center;
+                ">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+        <form id="loginForm" method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="nama@email.com"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-toggle">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Masukkan password"
+                        required
+                    >
+                    <button type="button" onclick="togglePassword('password')">👁️</button>
+                </div>
+            </div>
+
+            <div class="forgot-password">
+                <a href="#forgot">Lupa password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">Masuk</button>
+        </form>
+
+        <div class="divider">
+            <span>atau masuk dengan</span>
+        </div>
+
+        <div class="social-login">
+            <button class="social-btn" onclick="loginWithGoogle()">
+                <span>🔍</span> Google
+            </button>
+            <button class="social-btn" onclick="loginWithFacebook()">
+                <span>📘</span> Facebook
+            </button>
+        </div>
+
+        <div class="signup-link">
+            Belum punya akun? <a href="{% url 'register' %}">Daftar sekarang</a>
+        </div>
+    </div>
+
+    <script src="{% static 'js/login.js' %}"></script>
+</body>
+</html>

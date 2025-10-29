@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TechSpark</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>TechSpark</h1>
+            <p>Buat akun baru Anda</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        {% if messages %}
+            <div style="margin-bottom: 20px;">
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                <div style="
+                    padding: 12px; 
+                    border-radius: 8px; 
+                    color: #fff; 
+                    font-weight: 500;
+                    text-align: center;
+                    background: #e74c3c;
+                ">
+                    {{ message }}
+                </div>
+                {% else %}
+                <div style="
+                    padding: 12px; 
+                    border-radius: 8px; 
+                    color: #fff; 
+                    font-weight: 500;
+                    text-align: center;
+                    background: #2ecc71;
+                ">
+                    {{ message }}
+                </div>
+                {% endif %}
+            {% endfor %}
+            </div>
+        {% endif %}
+        <form id="registerForm" method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="full_name">Nama Lengkap</label>
+                <input 
+                    type="text" 
+                    id="full_name" 
+                    name="full_name" 
+                    placeholder="Masukkan nama lengkap"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="nama@email.com"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-toggle">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Buat password"
+                        required
+                    >
+                    <button type="button" onclick="togglePassword('password')">👁️</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password_confirm">Konfirmasi Password</label>
+                <div class="password-toggle">
+                    <input 
+                        type="password" 
+                        id="password_confirm" 
+                        name="password_confirm" 
+                        placeholder="Ulangi password"
+                        required
+                    >
+                    <button type="button" onclick="togglePassword('password_confirm')">👁️</button>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">Daftar</button>
+        </form>
+
+        <div class="divider">
+            <span>atau daftar dengan</span>
+        </div>
+
+        <div class="social-login">
+            <button class="social-btn" onclick="loginWithGoogle()">
+                <span>🔍</span> Google
+            </button>
+            <button class="social-btn" onclick="loginWithFacebook()">
+                <span>📘</span> Facebook
+            </button>
+        </div>
+
+        <div class="signup-link">
+            Sudah punya akun? <a href="{% url 'login' %}">Masuk di sini</a>
+        </div>
+    </div>
+
+    <script src="{% static 'js/register.js' %}"></script>
+</body>
+</html>
