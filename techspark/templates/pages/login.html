@@ -32,12 +32,12 @@
             {% csrf_token %}
             
             <div class="form-group">
-                <label for="login_field">Email atau Username</label>
+                <label for="login_field">Email</label>
                 <input 
                     type="text" 
                     id="login_field" 
                     name="login_field" 
-                    placeholder="nama@email.com atau admin"
+                    placeholder="nama@email.com"
                     required
                 >
             </div>
@@ -55,11 +55,6 @@
                     <button type="button" onclick="togglePassword('password')">👁️</button>
                 </div>
             </div>
-
-            <div class="forgot-password">
-                <a href="#forgot">Lupa password?</a>
-            </div>
-
             <button type="submit" class="login-btn">Masuk</button>
         </form>
 
