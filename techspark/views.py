@@ -1,7 +1,15 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import get_object_or_404
+from .models import Product
+from .forms import ProductForm
+
+def is_staff(user):
+    return user.is_staff
 
 # View beranda (tidak berubah)
 def home_view(request):
@@ -11,29 +19,35 @@ def home_view(request):
 def login_view(request):
     if request.method == 'POST':
         # Ambil data dari form
-        email = request.POST.get('email')
+        login_input = request.POST.get('login_field') # <-- UBAH INI
         password = request.POST.get('password')
 
         # 1. Cek kredensial pakai 'authenticate'
-        # Kita pakai 'email' sebagai 'username'
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=login_input, password=password) # <-- UBAH INI
 
         # 2. Cek hasilnya
         if user is not None:
             # Jika user ada dan password-nya benar
             login(request, user)  # Buat sesi login untuk user
             
-            # (Opsional) Kasih pesan selamat datang
-            messages.success(request, f'Selamat datang kembali, {user.first_name}!')
+            # ===== LOGIKA REDIRECT BARU =====
+            # Cek apakah user adalah admin/staff
+            if user.is_staff:
+                messages.success(request, f'Selamat datang, Admin {user.first_name or user.username}!')
+                # Arahkan staff ke dashboard
+                return redirect('dashboard')
+            else:
+                messages.success(request, f'Selamat datang kembali, {user.first_name}!')
+                # Arahkan user biasa ke beranda
+                return redirect('home')
+            # ================================
             
-            # Arahkan ke halaman beranda
-            return redirect('home')
         else:
             # Jika user tidak ada atau password salah
             messages.error(request, 'Email atau password yang Anda masukkan salah.')
             # Kembalikan ke halaman login (untuk menampilkan pesan error)
-            return render(request, 'pages/login.html')
-
+            return render(request, 'pages/login.html')  
+        
     # Jika metodenya GET (baru buka halaman), tampilkan halaman login
     return render(request, 'pages/login.html')
 
@@ -81,4 +95,72 @@ def register_view(request):
 
 # View list produk (tidak berubah)
 def product_list_view(request):
-    return render(request, 'pages/product_list.html')
+    # Ambil SEMUA produk, bukan cuma 4
+    products = Product.objects.all().order_by('-created_at') 
+    
+    context = {
+        'products': products
+    }
+    return render(request, 'pages/product_list.html', context)
+
+
+# === VIEWS DASHBOARD ADMIN (BARU) ===
+
+@login_required(login_url='login') # Harus login
+@user_passes_test(is_staff) # Harus staff
+def dashboard_view(request):
+    # 'R'ead - Tampilkan semua produk
+    products = Product.objects.all().order_by('-created_at')
+    return render(request, 'pages/dashboard.html', {'products': products})
+
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def product_add_view(request):
+    # 'C'reate - Tambah produk baru
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save() # Simpan ke database
+            messages.success(request, 'Produk baru berhasil ditambahkan!')
+            return redirect('dashboard')
+    else:
+        form = ProductForm()
+        
+    return render(request, 'pages/product_form.html', {'form': form, 'title': 'Tambah Produk Baru'})
+
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def product_edit_view(request, pk):
+    # 'U'pdate - Edit produk
+    product = get_object_or_404(Product, pk=pk) # Ambil produk berdasarkan ID (pk)
+    
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save() # Simpan perubahan
+            messages.success(request, 'Produk berhasil diperbarui!')
+            return redirect('dashboard')
+    else:
+        form = ProductForm(instance=product) # Isi form dengan data produk yg ada
+        
+    return render(request, 'pages/product_form.html', {'form': form, 'title': f'Edit Produk: {product.name}'})
+
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def product_delete_view(request, pk):
+    # 'D'elete - Hapus produk
+    product = get_object_or_404(Product, pk=pk)
+    
+    if request.method == 'POST':
+        product.delete() # Hapus produk dari database
+        messages.success(request, 'Produk berhasil dihapus.')
+        return redirect('dashboard')
+        
+    return render(request, 'pages/product_confirm_delete.html', {'product': product})
+
+
+@login_required # <-- Pastikan user login sebelum bisa logout
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Anda berhasil logout.")
+    return redirect('login')

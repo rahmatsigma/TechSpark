@@ -1,7 +1,6 @@
 {% extends 'pages/base.html' %}
 {% load static %}
-
-{% block title %}Semua Produk - TechSpark{% endblock %}
+{% load humanize %} {% block title %}Semua Produk - TechSpark{% endblock %}
 
 {% block content %}
 
@@ -9,12 +8,26 @@
     
         <h2 class="section-title">Semua Produk Kami</h2>
         
-        <p style="text-align: center; font-size: 1.2rem; color: #b9d5f0;">
-            Halaman ini masih dalam pengembangan.
-            <br>
-            Nantinya, semua produk akan muncul di sini.
-        </p>
+        <div class="products">
+            
+            {% for product in products %}
+            <div class="product-card">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">Rp {{ product.price|intcomma }}</p>
+                    <button class="btn btn-primary" onclick="alert('Fitur segera hadir!')">Tambah ke Keranjang</button>
+                </div>
+            </div>
+            {% empty %}
+            <p style="text-align: center; font-size: 1.2rem; color: #b9d5f0; grid-column: 1 / -1;">
+                Belum ada produk yang tersedia.
+                <br>
+                Coba tambahkan produk baru melalui <a href="{% url 'dashboard' %}" style="color: #33c8ff;">Panel Admin</a>.
+            </p>
+            {% endfor %}
 
         </div>
+    </div>
 
 {% endblock %}

@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %} - TechSpark</title>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f9fafb; /* Latar abu-abu muda */
+            color: #1f2937;
+        }
+        a { text-decoration: none; color: #4f46e5; }
+        a:hover { text-decoration: underline; }
+        .admin-wrapper { display: flex; }
+
+        /* === Sidebar (Mirip Dash UI) === */
+        .admin-sidebar {
+            width: 260px;
+            background: #111827; /* Sidebar gelap */
+            color: #d1d5db;
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            border-bottom: 1px solid #374151;
+        }
+        .sidebar-nav {
+            padding: 1rem;
+            flex-grow: 1;
+        }
+        .sidebar-nav ul { list-style: none; }
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.25rem;
+            color: #d1d5db;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background: #4f46e5; /* Warna ungu */
+            color: white;
+        }
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #374151;
+        }
+        .sidebar-footer a {
+            display: block;
+            text-align: center;
+            color: #9ca3af;
+        }
+        .sidebar-footer a:hover { color: white; }
+
+        /* === Konten Utama === */
+        .admin-content-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        /* === Top Nav (Header Putih) === */
+        .admin-top-nav {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            height: 70px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        .user-info { display: flex; align-items: center; gap: 1rem; }
+        .user-info span { font-weight: 500; }
+        .user-info a {
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* === Konten Area === */
+        .admin-main-content {
+            padding: 2rem;
+        }
+        .content-header {
+            background: #4f46e5; /* Header ungu */
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        .admin-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+
+        /* === Komponen UI (Tombol, Form, Tabel) === */
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #4f46e5; color: white; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-danger { background: #e11d48; color: white; }
+        .btn-danger:hover { background: #be123c; }
+        .btn-secondary { background: #e5e7eb; color: #1f2937; }
+        .btn-secondary:hover { background: #d1d5db; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table th, .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .admin-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        .admin-table tr:hover { background: #f9fafb; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                TechSpark
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="{% url 'dashboard' %}" class="active">
+                            <span>📦</span> Manajemen Produk
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="{% url 'home' %}">← Kembali ke Toko</a>
+            </div>
+        </aside>
+
+        <div class="admin-content-wrapper">
+            
+            <header class="admin-top-nav">
+                <div class="user-info">
+                    <span>Halo, {{ user.first_name|default:user.username }}!</span>
+                    <a href="{% url 'logout' %}">Logout</a>
+                </div>
+            </header>
+
+            <main class="admin-main-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>

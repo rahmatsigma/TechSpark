@@ -1,0 +1,25 @@
+{% extends 'pages/admin_base.html' %}
+
+{% block title %}Konfirmasi Hapus{% endblock %}
+
+{% block content %}
+    
+    <div class="content-header">
+        <h1>Konfirmasi Hapus</h1>
+    </div>
+
+    <div class="admin-card" style="max-width: 600px; text-align: center;">
+        
+        <p style="font-size: 1.1rem; line-height: 1.6;">
+            Anda yakin ingin menghapus produk:
+            <br>
+            <strong style="font-size: 1.5rem; color: #e11d48; margin: 0.5rem 0; display: block;">{{ product.name }}</strong>
+        </p>
+        
+        <form method="POST" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Ya, Hapus Produk Ini</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Batal</a>
+        </form>
+    </div>
+{% endblock %}

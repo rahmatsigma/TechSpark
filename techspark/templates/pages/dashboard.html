@@ -1,0 +1,53 @@
+{% extends 'pages/admin_base.html' %}
+{% load humanize %}
+
+{% block title %}Manajemen Produk{% endblock %}
+
+{% block content %}
+    
+    <div class="content-header">
+        <h1>Manajemen Produk</h1>
+        <a href="{% url 'product_add' %}" class="btn btn-secondary" style="background: white; color: #4f46e5;">+ Tambah Produk Baru</a>
+    </div>
+
+    <div class="admin-card">
+        
+        {% if messages %}
+            {% for message in messages %}
+            <div style="background: #10b981; color: white; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; text-align: center;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Nama Produk</th>
+                    <th>Harga</th>
+                    <th>Tgl Dibuat</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <strong style="color: #1f2937;">{{ product.name }}</strong>
+                    </td>
+                    <td>Rp {{ product.price|intcomma }}</td>
+                    <td>{{ product.created_at|date:"d M Y" }}</td>
+                    <td class="action-links">
+                        <a href="{% url 'product_edit' product.pk %}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Edit</a>
+                        <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger" style="padding: 0.5rem 1rem;">Hapus</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 2rem; text-align: center;">Belum ada produk.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
