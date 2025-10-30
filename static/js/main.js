@@ -94,3 +94,41 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 document.addEventListener('DOMContentLoaded', (event) => {
     loadProducts();
 });
+
+
+
+/* ==================
+   Logika Dropdown Profil
+================== */
+
+// Jalankan ini setelah semua konten halaman dimuat
+document.addEventListener('DOMContentLoaded', (event) => {
+    
+    // Cek apakah tombol profil ada di halaman ini
+    const profileBtn = document.getElementById('profileBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    if (profileBtn && profileDropdown) {
+        
+        // 1. Tampilkan/Sembunyikan menu saat ikon diklik
+        profileBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Hentikan event agar tidak ditangkap 'window'
+            profileDropdown.classList.toggle('show');
+        });
+
+        // 2. Sembunyikan menu saat user klik di luar menu
+        window.addEventListener('click', function(e) {
+            if (profileDropdown.classList.contains('show')) {
+                // Cek apakah yang diklik BUKAN menu atau tombol
+                if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.remove('show');
+                }
+            }
+        });
+    }
+
+    // Pastikan fungsi loadProducts masih dipanggil jika ada
+    if (document.getElementById('products-container')) {
+        loadProducts();
+    }
+});

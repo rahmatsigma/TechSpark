@@ -374,3 +374,106 @@ footer {
         flex-direction: column;
     }
 }
+
+
+/* ==================
+    Navbar Icons & Dropdown
+================== */
+.nav-icon-btn {
+    background: none;
+    border: none;
+    color: #f0f9ff;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+    padding: 0;
+    margin: 0;
+}
+.nav-icon-btn:hover {
+    color: #33c8ff;
+}
+
+/* Container untuk dropdown (butuh position: relative) */
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Tombol ikon profil (sudah di-style oleh .nav-icon-btn) */
+.profile-icon-btn i {
+    font-size: 1.4rem; /* Bikin ikon profil sedikit lebih besar */
+    vertical-align: middle;
+}
+
+/* Menu Dropdown (tersembunyi by default) */
+.dropdown-menu {
+    display: none; /* (Akan di-toggle oleh JS) */
+    position: absolute;
+    top: 40px; /* Jarak dari ikon */
+    right: 0;
+    background: #141d2e;
+    border: 1px solid rgba(51, 200, 255, 0.2);
+    border-radius: 8px;
+    min-width: 220px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    z-index: 101;
+    overflow: hidden; /* Agar border-radius-nya rapi */
+}
+
+/* Kelas 'show' (dari JS) untuk menampilkan menu */
+.dropdown-menu.show {
+    display: block;
+}
+
+/* Header di dalam dropdown */
+.dropdown-header {
+    padding: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #b9d5f0;
+    border-bottom: 1px solid rgba(51, 200, 255, 0.2);
+}
+
+/* Link di dalam dropdown */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.75rem 1rem;
+    color: #f0f9ff;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: rgba(51, 200, 255, 0.1);
+    color: #33c8ff;
+}
+
+.dropdown-item i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Warna khusus untuk tombol logout */
+.dropdown-item.logout:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+/* === CSS UNTUK PESAN FEEDBACK === */
+.message-box {
+    padding: 12px; 
+    border-radius: 8px; 
+    color: #fff; 
+    font-weight: 500;
+    text-align: center;
+}
+.message-success {
+    background: #2ecc71; /* Warna hijau */
+}
+.message-error {
+    background: #e74c3c; /* Warna merah */
+}

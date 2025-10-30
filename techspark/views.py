@@ -1,3 +1,5 @@
+from django.contrib.auth import update_session_auth_hash
+from .forms import UserUpdateForm, CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import authenticate, login
@@ -7,82 +9,71 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404
 from .models import Product
 from .forms import ProductForm
+from django.contrib.auth.decorators import login_required
 
 def is_staff(user):
     return user.is_staff
 
-# View beranda (tidak berubah)
+# View beranda 
 def home_view(request):
     return render(request, 'pages/beranda.html') 
 
-# === FUNGSI LOGIN (VERSI LENGKAP) ===
+# === FUNGSI LOGIN  ===
 def login_view(request):
     if request.method == 'POST':
         # Ambil data dari form
-        login_input = request.POST.get('login_field') # <-- UBAH INI
+        login_input = request.POST.get('login_field') 
         password = request.POST.get('password')
 
         # 1. Cek kredensial pakai 'authenticate'
-        user = authenticate(request, username=login_input, password=password) # <-- UBAH INI
+        user = authenticate(request, username=login_input, password=password)
 
         # 2. Cek hasilnya
         if user is not None:
-            # Jika user ada dan password-nya benar
-            login(request, user)  # Buat sesi login untuk user
+            login(request, user) 
             
-            # ===== LOGIKA REDIRECT BARU =====
+            # ===== LOGIKA REDIRECT =====
             # Cek apakah user adalah admin/staff
             if user.is_staff:
                 messages.success(request, f'Selamat datang, Admin {user.first_name or user.username}!')
-                # Arahkan staff ke dashboard
                 return redirect('dashboard')
             else:
                 messages.success(request, f'Selamat datang kembali, {user.first_name}!')
-                # Arahkan user biasa ke beranda
                 return redirect('home')
-            # ================================
             
         else:
-            # Jika user tidak ada atau password salah
             messages.error(request, 'Email atau password yang Anda masukkan salah.')
-            # Kembalikan ke halaman login (untuk menampilkan pesan error)
             return render(request, 'pages/login.html')  
         
-    # Jika metodenya GET (baru buka halaman), tampilkan halaman login
     return render(request, 'pages/login.html')
 
-# === FUNGSI REGISTER (VERSI LENGKAP) ===
+# === FUNGSI REGISTER  ===
 def register_view(request):
     if request.method == 'POST':
-        # Ambil semua data dari form register
         nama_lengkap = request.POST.get('full_name')
         email = request.POST.get('email')
         password = request.POST.get('password')
         password_confirm = request.POST.get('password_confirm')
 
         # --- VALIDASI ---
-        # 1. Cek apakah password & konfirmasi sama
         if password != password_confirm:
             messages.error(request, 'Password dan Konfirmasi Password tidak cocok!')
             return render(request, 'pages/register.html')
         
-        # 2. Cek apakah email (username) sudah terdaftar
         if User.objects.filter(username=email).exists():
             messages.error(request, 'Email ini sudah terdaftar. Silakan gunakan email lain.')
             return render(request, 'pages/register.html')
 
         # --- JIKA LOLOS VALIDASI ---
         try:
-            # 3. Buat user baru di database
+            # Buat user baru di database
             user = User.objects.create_user(
-                username=email,          # Kita pakai email sebagai username
+                username=email,         
                 email=email,
-                password=password,       # Django akan HASH password ini
-                first_name=nama_lengkap  # Menyimpan nama lengkap
+                password=password,       
+                first_name=nama_lengkap  
             )
-            # user.save() tidak perlu, create_user sudah otomatis menyimpan
 
-            # 4. Beri pesan sukses dan arahkan ke login
             messages.success(request, 'Akun Anda berhasil dibuat! Silakan login.')
             return redirect('login')
 
@@ -90,12 +81,10 @@ def register_view(request):
             messages.error(request, f'Terjadi kesalahan: {e}')
             return render(request, 'pages/register.html')
 
-    # Jika metodenya GET, tampilkan halaman register
     return render(request, 'pages/register.html')
 
-# View list produk (tidak berubah)
+# View list produk 
 def product_list_view(request):
-    # Ambil SEMUA produk, bukan cuma 4
     products = Product.objects.all().order_by('-created_at') 
     
     context = {
@@ -104,23 +93,21 @@ def product_list_view(request):
     return render(request, 'pages/product_list.html', context)
 
 
-# === VIEWS DASHBOARD ADMIN (BARU) ===
+# === VIEWS DASHBOARD ADMIN ===
 
-@login_required(login_url='login') # Harus login
-@user_passes_test(is_staff) # Harus staff
+@login_required(login_url='login')
+@user_passes_test(is_staff)
 def dashboard_view(request):
-    # 'R'ead - Tampilkan semua produk
     products = Product.objects.all().order_by('-created_at')
     return render(request, 'pages/dashboard.html', {'products': products})
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)
 def product_add_view(request):
-    # 'C'reate - Tambah produk baru
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
-            form.save() # Simpan ke database
+            form.save() 
             messages.success(request, 'Produk baru berhasil ditambahkan!')
             return redirect('dashboard')
     else:
@@ -137,12 +124,12 @@ def product_edit_view(request, pk):
     if request.method == 'POST':
         form = ProductForm(request.POST, instance=product)
         if form.is_valid():
-            form.save() # Simpan perubahan
+            form.save()
             messages.success(request, 'Produk berhasil diperbarui!')
             return redirect('dashboard')
     else:
-        form = ProductForm(instance=product) # Isi form dengan data produk yg ada
-        
+        form = ProductForm(instance=product)
+
     return render(request, 'pages/product_form.html', {'form': form, 'title': f'Edit Produk: {product.name}'})
 
 @login_required(login_url='login')
@@ -152,15 +139,55 @@ def product_delete_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
     
     if request.method == 'POST':
-        product.delete() # Hapus produk dari database
+        product.delete()
         messages.success(request, 'Produk berhasil dihapus.')
         return redirect('dashboard')
         
     return render(request, 'pages/product_confirm_delete.html', {'product': product})
 
 
-@login_required # <-- Pastikan user login sebelum bisa logout
+@login_required 
 def logout_view(request):
     logout(request)
     messages.success(request, "Anda berhasil logout.")
     return redirect('login')
+
+# === TAMBAHKAN VIEW BARU INI ===
+@login_required(login_url='login') # Pastikan user sudah login
+def settings_view(request):
+    
+    if request.method == 'POST':
+        # Cek form mana yang di-submit
+        if 'update_info_submit' in request.POST:
+            # === Ini logika untuk Form Ganti Nama ===
+            user_form = UserUpdateForm(request.POST, instance=request.user)
+            password_form = CustomPasswordChangeForm(user=request.user) # Buat form kosong
+            
+            if user_form.is_valid():
+                user_form.save()
+                messages.success(request, 'Nama Anda berhasil diperbarui!')
+                return redirect('settings')
+        
+        elif 'change_password_submit' in request.POST:
+            # === Ini logika untuk Form Ganti Password ===
+            user_form = UserUpdateForm(instance=request.user) # Buat form kosong
+            password_form = CustomPasswordChangeForm(request.user, request.POST)
+            
+            if password_form.is_valid():
+                user = password_form.save()
+                # PENTING: Update sesi agar user tidak auto-logout
+                update_session_auth_hash(request, user) 
+                messages.success(request, 'Password Anda berhasil diubah!')
+                return redirect('settings')
+    
+    else:
+        # === Ini logika untuk GET (user baru buka halaman) ===
+        user_form = UserUpdateForm(instance=request.user)
+        password_form = CustomPasswordChangeForm(user=request.user)
+
+    # Kirim kedua form ke template
+    context = {
+        'user_form': user_form,
+        'password_form': password_form
+    }
+    return render(request, 'pages/settings.html', context)

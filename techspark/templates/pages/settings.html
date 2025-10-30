@@ -1,0 +1,85 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+
+{% block title %}Pengaturan Akun - TechSpark{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; min-height: 80vh;">
+    
+    <h2 class="section-title">Pengaturan Akun</h2>
+    
+    <div class="newsletter" style="max-width: 800px; margin: 0 auto;">
+        
+        {% if messages %}
+            {% for message in messages %}
+            <div class="message-box {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}" style="margin-bottom: 2rem;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <h3 style="text-align: left; margin-bottom: 2rem;">Perbarui Profil</h3>
+            
+            {% for field in user_form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <small style="color: #e74c3c; display: block; margin-top: 5px;">{{ field.errors|first }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" name="update_info_submit" class="btn btn-primary">Simpan Perubahan</button>
+        </form>
+
+        <hr style="border: none; border-top: 1px solid rgba(51, 200, 255, 0.2); margin: 3rem 0 2rem 0;">
+
+        <form method="POST">
+            {% csrf_token %}
+            <h3 style="text-align: left; margin-bottom: 2rem;">Ubah Password</h3>
+            
+            {% for field in password_form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <small style="color: #e74c3c; display: block; margin-top: 5px;">{{ field.errors|first }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" name="change_password_submit" class="btn btn-primary">Ubah Password</button>
+        </form>
+        
+    </div>
+</div>
+
+<style>
+    .form-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #f0f9ff;
+    }
+    .form-control {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(51, 200, 255, 0.3);
+        background: rgba(10, 15, 26, 0.5);
+        color: #f0f9ff;
+        font-size: 1rem;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #33c8ff;
+    }
+</style>
+{% endblock %}
