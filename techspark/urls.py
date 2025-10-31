@@ -14,6 +14,14 @@ urlpatterns = [
 
     path('pengaturan/', views.settings_view, name='settings'),
 
+    path('add-to-cart/<int:product_id>/', views.add_to_cart_view, name='add_to_cart'),
+
+    path('keranjang/', views.cart_detail_view, name='cart_detail'),
+
+    path('keranjang/update/<int:item_id>/', views.update_cart_quantity_view, name='update_cart_quantity'),
+    
+    path('keranjang/remove/<int:item_id>/', views.remove_from_cart_view, name='remove_from_cart'),
+
     # === URL DASHBOARD ADMIN KUSTOM (BARU) ===
     # 'R'ead (List)
     path('dashboard/', views.dashboard_view, name='dashboard'),

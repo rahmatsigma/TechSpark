@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404
+from .models import Product, Cart, CartItem
 from .models import Product
 from .forms import ProductForm
 from django.contrib.auth.decorators import login_required
@@ -191,3 +192,77 @@ def settings_view(request):
         'password_form': password_form
     }
     return render(request, 'pages/settings.html', context)
+
+
+@login_required(login_url='login') 
+def add_to_cart_view(request, product_id):
+    # 1. Ambil produk yang mau ditambahkan
+    product = get_object_or_404(Product, id=product_id)
+    
+    # 2. Ambil keranjang milik user 
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    
+    # 3. Cek apakah produk sudah ada di keranjang
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+    
+    if not created:
+        # Jika sudah ada, tambah jumlahnya (quantity)
+        cart_item.quantity += 1
+        cart_item.save()
+        messages.success(request, f"Jumlah '{product.name}' di keranjang diperbarui.")
+    else:
+        # Jika baru, biarkan quantity = 1 (default)
+        messages.success(request, f"'{product.name}' berhasil ditambahkan ke keranjang.")
+
+    # 4. Arahkan user kembali ke halaman sebelumnya
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+
+@login_required(login_url='login')
+def cart_detail_view(request):
+    # Ambil keranjang user (atau buat jika belum ada)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    items = cart.items.all().order_by('product__name')
+    
+    # Hitung total harga
+    total_price = sum(item.subtotal for item in items)
+    
+    context = {
+        'items': items,
+        'total_price': total_price
+    }
+    return render(request, 'pages/cart_detail.html', context)
+
+
+@login_required(login_url='login')
+def update_cart_quantity_view(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    
+    if request.method == 'POST':
+        quantity = request.POST.get('quantity')
+        try:
+            quantity = int(quantity)
+            if quantity > 0:
+                if quantity <= item.product.stock:
+                    item.quantity = quantity
+                    item.save()
+                    messages.success(request, f"Jumlah '{item.product.name}' diperbarui.")
+                else:
+                    messages.error(request, f"Stok '{item.product.name}' tidak mencukupi (tersisa {item.product.stock}).")
+            else:
+                # Jika user set ke 0 atau kurang, hapus saja
+                item.delete()
+                messages.success(request, f"'{item.product.name}' dihapus dari keranjang.")
+        except ValueError:
+            messages.error(request, "Jumlah tidak valid.")
+            
+    return redirect('cart_detail')
+
+
+@login_required(login_url='login')
+def remove_from_cart_view(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    item_name = item.product.name
+    item.delete()
+    messages.success(request, f"'{item_name}' telah dihapus dari keranjang.")
+    return redirect('cart_detail')

@@ -1,0 +1,76 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Keranjang Belanja - TechSpark{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; min-height: 80vh;">
+    <h2 class="section-title">Keranjang Belanja Anda</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="message-box {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}" style="margin-bottom: 2rem;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if not items %}
+    <p style="text-align: center; font-size: 1.2rem; color: #b9d5f0;">
+        Keranjang belanja Anda masih kosong.
+        <br><br>
+        <a href="{% url 'product_list' %}" class="btn btn-primary">Mulai Belanja</a>
+    </p>
+    
+    {% else %}
+    <div style="background: #141d2e; border-radius: 8px; padding: 1rem; overflow-x: auto;">
+        <table class="cart-table" style="width: 100%; border-collapse: collapse; min-width: 600px;">
+            <thead style="border-bottom: 2px solid #33c8ff;">
+                <tr>
+                    <th colspan="2" style="padding: 1rem; text-align: left;">Produk</th>
+                    <th style="padding: 1rem; text-align: left;">Harga</th>
+                    <th style="padding: 1rem; text-align: center;">Jumlah</th>
+                    <th style="padding: 1rem; text-align: right;">Subtotal</th>
+                    <th style="padding: 1rem; text-align: center;">Hapus</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr style="border-bottom: 1px solid rgba(51, 200, 255, 0.2);">
+                    <td style="padding: 1rem; width: 80px;">
+                        <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" style="width: 100%; height: auto; border-radius: 4px;">
+                    </td>
+                    <td style="padding: 1rem;">{{ item.product.name }}</td>
+                    <td style="padding: 1rem;">Rp {{ item.product.price|intcomma }}</td>
+                    
+                    <td style="padding: 1rem; width: 130px;">
+                        <form action="{% url 'update_cart_quantity' item.id %}" method="POST" style="display: flex;">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" 
+                                style="width: 60px; padding: 0.5rem; border-radius: 4px; border: 1px solid #33c8ff; background: #0a0f1a; color: white;">
+                            <button type="submit" class="btn btn-secondary" style="padding: 0.5rem; margin-left: 5px;">Update</button>
+                        </form>
+                    </td>
+                    
+                    <td style="padding: 1rem; text-align: right; font-weight: bold;">Rp {{ item.subtotal|intcomma }}</td>
+                    
+                    <td style="padding: 1rem; text-align: center;">
+                        <a href="{% url 'remove_from_cart' item.id %}" class="btn" style="background: #e74c3c; color: white; padding: 0.5rem 1rem;">X</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: right; margin-top: 2rem;">
+        <h3 style="font-size: 2rem;">Total: <span style="color: #33c8ff;">Rp {{ total_price|intcomma }}</span></h3>
+        <a href="#" class="btn btn-primary" style="margin-top: 1rem; padding: 1rem 3rem;" onclick="alert('Fitur Checkout segera hadir!')">
+            Checkout
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

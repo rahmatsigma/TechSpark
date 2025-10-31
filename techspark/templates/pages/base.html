@@ -24,7 +24,11 @@
             </ul>
             
             <div class="nav-icons">                
-                <button onclick="showCart()" class="nav-icon-btn">🛒 <span id="cart-count">0</span></button>
+                <a href="{% url 'cart_detail' %}" class="nav-icon-btn">
+                    <i class="bi bi-cart"></i> <span id="cart-count" style="font-size: 1.1rem; margin-left: 5px; font-weight: 500;">
+                        {{ cart_item_count }}
+                    </span>
+                </a>
 
                 {% if user.is_authenticated %}
                 <div class="profile-dropdown">

@@ -22,9 +22,9 @@
                     </div>
 
                     <div class="product-btn-group">
-                        <button class="btn btn-secondary btn-cart" onclick="alert('Ditambahkan ke keranjang!')">
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-secondary btn-cart">
                             <i class="bi bi-cart-plus"></i> Cart
-                        </button>
+                        </a>
                         <button class="btn btn-primary btn-buy" onclick="alert('Fitur Beli segera hadir!')">
                             Beli
                         </button>
