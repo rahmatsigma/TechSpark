@@ -15,8 +15,20 @@
                 <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
                 <div class="product-info">
                     <h3 class="product-name">{{ product.name }}</h3>
-                    <p class="product-price">Rp {{ product.price|intcomma }}</p>
-                    <button class="btn btn-primary" onclick="alert('Fitur segera hadir!')">Tambah ke Keranjang</button>
+                    
+                    <div class="product-price-stock">
+                        <p class="product-price">Rp {{ product.price|intcomma }}</p>
+                        <span class="product-stock">Stok: {{ product.stock }}</span>
+                    </div>
+
+                    <div class="product-btn-group">
+                        <button class="btn btn-secondary btn-cart" onclick="alert('Ditambahkan ke keranjang!')">
+                            <i class="bi bi-cart-plus"></i> Cart
+                        </button>
+                        <button class="btn btn-primary btn-buy" onclick="alert('Fitur Beli segera hadir!')">
+                            Beli
+                        </button>
+                    </div>
                 </div>
             </div>
             {% empty %}

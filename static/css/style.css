@@ -477,3 +477,43 @@ footer {
 .message-error {
     background: #e74c3c; /* Warna merah */
 }
+
+/* === CSS UNTUK KARTU PRODUK DENGAN STOK === */
+.product-price-stock {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.product-price {
+    margin-bottom: 0;
+}
+
+.product-stock {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #b9d5f0;
+    background: rgba(51, 200, 255, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.product-btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.product-btn-group .btn {
+    flex: 1;
+    width: 100%;
+    padding: 0.75rem 0.5rem; 
+    font-size: 0.9rem;
+}
+
+.product-btn-group .btn-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}

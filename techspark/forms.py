@@ -13,12 +13,14 @@ class ProductForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'image_url': forms.URLInput(attrs={'class': 'form-control'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'name': 'Nama Produk',
             'description': 'Deskripsi',
             'price': 'Harga (Rupiah)',
-            'image_url': 'URL Gambar Produk'
+            'image_url': 'URL Gambar Produk',
+            'stock': 'Stok Produk',
         }
 
 # 2. Form untuk ganti Nama
