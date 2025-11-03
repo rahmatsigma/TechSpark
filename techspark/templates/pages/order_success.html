@@ -1,0 +1,18 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Pesanan Berhasil - TechSpark{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; min-height: 70vh; text-align: center;">
+    
+    <div style="font-size: 4rem;">🎉</div>
+    
+    <h2 class="section-title" style="margin-top: 1rem; margin-bottom: 1rem;">Terima Kasih!</h2>
+    
+    <p style="font-size: 1.25rem; color: #b9d5f0; margin-bottom: 3rem;">
+        Pesanan Anda telah berhasil kami terima dan akan segera diproses.
+    </p>
+    
+    <a href="{% url 'home' %}" class="btn btn-primary">Kembali ke Beranda</a>
+    </div>
+{% endblock %}

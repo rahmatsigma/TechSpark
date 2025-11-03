@@ -12,6 +12,8 @@ from .models import Product
 from .forms import ProductForm
 from .models import Product, Category
 from .forms import ProductForm, CategoryForm
+from .models import Product, Category, Cart, CartItem, Address, Order, OrderItem
+from .forms import AddressForm
 from django.contrib.auth.decorators import login_required
 
 def is_staff(user):
@@ -348,3 +350,89 @@ def category_delete_view(request, pk):
         return redirect('category_list')
         
     return render(request, 'pages/category_confirm_delete.html', {'category': category})
+
+
+# ==================================
+#  ▼▼▼ VIEW CHECKOUT & SUCCESS ▼▼▼
+# ==================================
+
+@login_required(login_url='login')
+def checkout_view(request):
+    try:
+        cart = Cart.objects.get(user=request.user)
+    except Cart.DoesNotExist:
+        # Jika user tidak punya keranjang, kembalikan ke beranda
+        messages.error(request, "Keranjang Anda kosong.")
+        return redirect('home')
+
+    items = cart.items.all()
+    total_price = sum(item.subtotal for item in items)
+
+    # Jika keranjang kosong, tidak bisa checkout
+    if items.count() == 0:
+        messages.error(request, "Anda tidak bisa checkout dengan keranjang kosong.")
+        return redirect('cart_detail')
+
+    # Cek jika user punya alamat default, untuk isi form
+    try:
+        default_address = Address.objects.get(user=request.user, is_default=True)
+        form = AddressForm(instance=default_address)
+    except Address.DoesNotExist:
+        form = AddressForm() # Form kosong
+
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
+        
+        if form.is_valid():
+            # 1. Buat alamat (tapi jangan simpan dulu)
+            address = form.save(commit=False)
+            address.user = request.user
+            address.save() # Simpan alamat baru
+            
+            # (Opsional: Jadikan alamat pertama sebagai default)
+            if not Address.objects.filter(user=request.user, is_default=True).exists():
+                address.is_default = True
+                address.save()
+
+            # 2. Buat Pesanan (Order)
+            order = Order.objects.create(
+                user=request.user,
+                full_name=address.full_name,
+                phone=address.phone,
+                shipping_address=f"{address.street_address}, {address.city}, {address.province}, {address.postal_code}",
+                total_price=total_price
+            )
+
+            # 3. Pindahkan item dari keranjang ke OrderItem
+            for item in items:
+                OrderItem.objects.create(
+                    order=order,
+                    product_name=item.product.name,
+                    product_price=item.product.price,
+                    quantity=item.quantity
+                )
+                
+                # 4. Kurangi stok produk
+                item.product.stock -= item.quantity
+                item.product.save()
+            
+            # 5. Kosongkan keranjang
+            cart.items.all().delete()
+            
+            # 6. Arahkan ke halaman sukses
+            messages.success(request, "Pesanan Anda berhasil dibuat!")
+            return redirect('order_success')
+        # Jika form tidak valid, halaman akan di-render ulang dengan error
+
+    context = {
+        'items': items,
+        'total_price': total_price,
+        'form': form
+    }
+    return render(request, 'pages/checkout.html', context)
+
+
+@login_required(login_url='login')
+def order_success_view(request):
+    # Halaman "Terima Kasih"
+    return render(request, 'pages/order_success.html')

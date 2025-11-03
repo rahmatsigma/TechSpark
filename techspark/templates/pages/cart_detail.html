@@ -58,7 +58,7 @@
 
     <div style="text-align: right; margin-top: 2rem;">
         <h3 style="font-size: 2rem;">Total: <span style="color: #33c8ff;">Rp {{ total_price|intcomma }}</span></h3>
-        <a href="#" class="btn btn-primary" style="margin-top: 1rem; padding: 1rem 3rem;" onclick="alert('Fitur Checkout segera hadir!')">
+        <a href="{% url 'checkout' %}" class="btn btn-primary" style="margin-top: 1rem; padding: 1rem 3rem;">
             Checkout
         </a>
     </div>

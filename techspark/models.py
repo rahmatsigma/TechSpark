@@ -55,3 +55,47 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name} di {self.cart.user.username}"
+    
+
+
+    # 1. Model untuk Alamat Pengiriman
+class Address(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=150)
+    phone = models.CharField(max_length=15)
+    street_address = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    province = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=10)
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Alamat {self.full_name} ({self.user.username})"
+    
+    class Meta:
+        verbose_name_plural = "Addresses"
+
+# 2. Model untuk Pesanan (Order)
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    # Kita salin data alamat ke sini, jadi jika user ganti alamat, data pesanan lama tidak berubah
+    full_name = models.CharField(max_length=150)
+    phone = models.CharField(max_length=15)
+    shipping_address = models.TextField() # Gabungan dari street, city, prov, postal
+    total_price = models.DecimalField(max_digits=10, decimal_places=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_paid = models.BooleanField(default=False) # Nanti bisa untuk payment gateway
+
+    def __str__(self):
+        return f"Order #{self.id} oleh {self.user.username}"
+
+# 3. Model untuk Item di dalam Pesanan
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    # Kita salin data produk, agar jika admin ganti harga/nama, data pesanan lama tidak berubah
+    product_name = models.CharField(max_length=200)
+    product_price = models.DecimalField(max_digits=10, decimal_places=0)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product_name}"
