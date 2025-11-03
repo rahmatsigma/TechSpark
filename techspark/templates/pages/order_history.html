@@ -1,0 +1,73 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Riwayat Pesananku - TechSpark{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; min-height: 80vh;">
+    <h2 class="section-title">Riwayat Pesananku</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+        <div class="message-box {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}" style="margin-bottom: 2rem;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    {% for order in orders %}
+    <div class="newsletter" style="margin-bottom: 2rem; text-align: left;">
+        <div class="order-header">
+            <div>
+                <h3 style="margin: 0;">Pesanan #{{ order.id }}</h3>
+                <span style="color: #b9d5f0; font-size: 0.9rem;">Dibuat: {{ order.created_at|date:"d M Y" }}</span>
+            </div>
+            <div style="text-align: right;">
+                <span class="order-status-{{ order.status }}">Status: {{ order.get_status_display }}</span>
+                <h4 style="margin: 0.25rem 0; font-size: 1.5rem;">Total: Rp {{ order.total_price|intcomma }}</h4>
+            </div>
+        </div>
+
+        <hr style="border-top: 1px solid rgba(51, 200, 255, 0.2); margin: 1.5rem 0;">
+
+        {% for item in order.items.all %}
+        <div class="order-item">
+            <img src="{{ item.product.image_url }}" alt="{{ item.product_name }}">
+            <div class.order-item-info>
+                <span style="font-weight: 600;">{{ item.product_name }}</span>
+                <span style="color: #b9d5f0; font-size: 0.9rem;">{{ item.quantity }} x Rp {{ item.product_price|intcomma }}</span>
+            </div>
+            
+            <div class="order-item-rating">
+                {% if order.status == 'completed' %}
+                    {% if item.rating %}
+                        <span class="rating-done">⭐ {{ item.rating.rating }}/5 (Sudah dirating)</span>
+                    {% else %}
+                        <a href="{% url 'rate_item' item.id %}" class="btn btn-secondary">Beri Rating</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% empty %}
+    <p style="text-align: center; font-size: 1.2rem; color: #b9d5f0;">
+        Anda belum memiliki riwayat pesanan.
+    </p>
+    {% endfor %}
+</div>
+
+<style>
+    .order-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .order-status-completed { color: #2ecc71; font-weight: 600; }
+    .order-status-cancelled { color: #e74c3c; font-weight: 600; }
+    .order-status-pending, .order-status-processing, .order-status-shipped { color: #f39c12; font-weight: 600; }
+    
+    .order-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .order-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+    .order-item-info { flex-grow: 1; }
+    .order-item-rating .btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
+    .rating-done { font-weight: 600; color: #f39c12; }
+</style>
+{% endblock %}

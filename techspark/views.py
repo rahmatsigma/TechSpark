@@ -12,9 +12,10 @@ from .models import Product
 from .forms import ProductForm
 from .models import Product, Category
 from .forms import ProductForm, CategoryForm
-from .models import Product, Category, Cart, CartItem, Address, Order, OrderItem
-from .forms import AddressForm
+from .models import Product, Category, Cart, CartItem, Address, Order, OrderItem, Rating
+from .forms import AddressForm, RatingForm
 from .models import Order
+from .forms import OrderForm
 from django.contrib.auth.decorators import login_required
 
 def is_staff(user):
@@ -353,6 +354,35 @@ def category_delete_view(request, pk):
     return render(request, 'pages/category_confirm_delete.html', {'category': category})
 
 
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def order_list_view(request):
+    # 'R'ead - Tampilkan semua pesanan, yang terbaru di atas
+    orders = Order.objects.all().order_by('-created_at')
+    return render(request, 'pages/order_list.html', {'orders': orders})
+
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def order_update_view(request, pk):
+    # 'U'pdate - Edit status pesanan
+    order = get_object_or_404(Order, pk=pk)
+    
+    if request.method == 'POST':
+        form = OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Status untuk Pesanan #{order.id} berhasil diperbarui.")
+            return redirect('order_list')
+    else:
+        form = OrderForm(instance=order)
+        
+    context = {
+        'form': form,
+        'order': order
+    }
+    return render(request, 'pages/order_update.html', context)
+
+
 # ==================================
 #  ▼▼▼ VIEW CHECKOUT & SUCCESS ▼▼▼
 # ==================================
@@ -405,6 +435,7 @@ def checkout_view(request):
             for item in items:
                 OrderItem.objects.create(
                     order=order,
+                    product=item.product,
                     product_name=item.product.name,
                     product_price=item.product.price,
                     quantity=item.quantity
@@ -437,3 +468,49 @@ def order_success_view(request, order_id):
     # Halaman "Terima Kasih"
     return render(request, 'pages/order_success.html', context)
 
+
+@login_required(login_url='login')
+def order_history_view(request):
+    # Ambil semua pesanan user, prefetch item & ratingnya
+    orders = Order.objects.filter(user=request.user).prefetch_related(
+        'items', 
+        'items__product', 
+        'items__rating' # Ambil rating terkait (jika ada)
+    ).order_by('-created_at')
+    
+    return render(request, 'pages/order_history.html', {'orders': orders})
+
+
+@login_required(login_url='login')
+def rate_item_view(request, item_id):
+    # Ambil item, pastikan itu milik user
+    item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+
+    # Cek 1: Hanya bisa rating jika order 'Selesai'
+    if item.order.status != 'completed':
+        messages.error(request, 'Anda hanya bisa memberi rating pada pesanan yang sudah selesai.')
+        return redirect('order_history')
+    
+    # Cek 2: Cek apakah sudah pernah dirating
+    if hasattr(item, 'rating'): # (Cek one-to-one field 'rating')
+        messages.error(request, 'Anda sudah memberi rating untuk produk ini.')
+        return redirect('order_history')
+
+    if request.method == 'POST':
+        form = RatingForm(request.POST)
+        if form.is_valid():
+            rating = form.save(commit=False)
+            rating.order_item = item       # Tautkan ke OrderItem
+            rating.user = request.user     # Tautkan ke User
+            rating.product = item.product  # Tautkan ke Product
+            rating.save()
+            messages.success(request, 'Rating Anda berhasil disimpan!')
+            return redirect('order_history')
+    else:
+        form = RatingForm()
+
+    context = {
+        'form': form,
+        'item': item
+    }
+    return render(request, 'pages/rate_item.html', context)

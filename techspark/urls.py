@@ -15,6 +15,7 @@ urlpatterns = [
     path('checkout/', views.checkout_view, name='checkout'),
     path('order-success/<int:order_id>/', views.order_success_view, name='order_success'),
 
+
     # === URL DASHBOARD ADMIN KUSTOM (BARU) ===
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('dashboard/product/add/', views.product_add_view, name='product_add'),
@@ -26,4 +27,9 @@ urlpatterns = [
     path('dashboard/category/add/', views.category_add_view, name='category_add'),
     path('dashboard/category/edit/<int:pk>/', views.category_edit_view, name='category_edit'),
     path('dashboard/category/delete/<int:pk>/', views.category_delete_view, name='category_delete'),
+    path('dashboard/orders/', views.order_list_view, name='order_list'),
+    path('dashboard/order/edit/<int:pk>/', views.order_update_view, name='order_update'),
+
+    path('pesananku/', views.order_history_view, name='order_history'),
+    path('rate-item/<int:item_id>/', views.rate_item_view, name='rate_item'),
 ]

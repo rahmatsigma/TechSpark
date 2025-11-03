@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Category, Address
+from .models import Product, Category, Address, Rating, Order   
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from .models import Product
@@ -87,3 +87,33 @@ class AddressForm(forms.ModelForm):
         
         self.fields['postal_code'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Contoh: 63112'})
         self.fields['postal_code'].label = "Kode Pos"
+
+class RatingForm(forms.ModelForm):
+    rating = forms.ChoiceField(
+        choices=[(5, '⭐⭐⭐⭐⭐'), (4, '⭐⭐⭐⭐'), (3, '⭐⭐⭐'), (2, '⭐⭐'), (1, '⭐')],
+        widget=forms.RadioSelect,
+        label="Rating Anda"
+    )
+    
+    class Meta:
+        model = Rating
+        fields = ['rating', 'review_text']
+        widgets = {
+            'review_text': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Tulis ulasan Anda...'}),
+        }
+        labels = {
+            'review_text': 'Ulasan (Opsional)',
+        }
+
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        # Kita hanya ingin admin bisa mengedit 'status'
+        fields = ['status']
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'status': 'Status Pesanan',
+        }

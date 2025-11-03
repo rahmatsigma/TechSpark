@@ -40,6 +40,11 @@
                         <div class="dropdown-header">
                             Halo, {{ user.first_name|default:user.username|truncatechars:15 }}
                         </div>
+                        
+                        <a href="{% url 'order_history' %}" class="dropdown-item">
+                            <i class="bi bi-box-seam"></i> Pesananku
+                        </a>
+                        
                         <a href="{% url 'settings' %}" class="dropdown-item">
                             <i class="bi bi-gear"></i> Pengaturan
                         </a>
