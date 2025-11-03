@@ -8,14 +8,6 @@
 <div class="container" style="padding-top: 5rem; min-height: 80vh;">
     <h2 class="section-title">Keranjang Belanja Anda</h2>
 
-    {% if messages %}
-        {% for message in messages %}
-        <div class="message-box {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}" style="margin-bottom: 2rem;">
-            {{ message }}
-        </div>
-        {% endfor %}
-    {% endif %}
-
     {% if not items %}
     <p style="text-align: center; font-size: 1.2rem; color: #b9d5f0;">
         Keranjang belanja Anda masih kosong.

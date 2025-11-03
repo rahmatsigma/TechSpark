@@ -10,6 +10,8 @@ from django.shortcuts import get_object_or_404
 from .models import Product, Cart, CartItem
 from .models import Product
 from .forms import ProductForm
+from .models import Product, Category
+from .forms import ProductForm, CategoryForm
 from django.contrib.auth.decorators import login_required
 
 def is_staff(user):
@@ -17,7 +19,13 @@ def is_staff(user):
 
 # View beranda 
 def home_view(request):
-    return render(request, 'pages/beranda.html') 
+    latest_products = Product.objects.all().order_by('-created_at')[:4]
+    main_categories = Category.objects.all()[:4]    
+    context = {
+        'products': latest_products,
+        'categories': main_categories, 
+    }
+    return render(request, 'pages/beranda.html', context)
 
 # === FUNGSI LOGIN  ===
 def login_view(request):
@@ -86,10 +94,28 @@ def register_view(request):
 
 # View list produk 
 def product_list_view(request):
-    products = Product.objects.all().order_by('-created_at') 
+    # 1. Ambil ID kategori yang dipilih dari URL (jika ada)
+    selected_category_id = request.GET.get('category')
+    
+    if selected_category_id:
+        # 2. Jika ada, filter produk berdasarkan ID kategori
+        products = Product.objects.filter(category__id=selected_category_id).order_by('-created_at')
+        try:
+            selected_category = Category.objects.get(id=selected_category_id)
+        except Category.DoesNotExist:
+            selected_category = None
+    else:
+        # 3. Jika tidak, tampilkan semua produk
+        products = Product.objects.all().order_by('-created_at')
+        selected_category = None
+
+    # 4. Ambil semua kategori untuk tombol filter
+    categories = Category.objects.all()
     
     context = {
-        'products': products
+        'products': products,
+        'categories': categories,
+        'selected_category': selected_category
     }
     return render(request, 'pages/product_list.html', context)
 
@@ -266,3 +292,59 @@ def remove_from_cart_view(request, item_id):
     item.delete()
     messages.success(request, f"'{item_name}' telah dihapus dari keranjang.")
     return redirect('cart_detail')
+
+
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def category_list_view(request):
+    # 'R'ead - Tampilkan semua kategori
+    categories = Category.objects.all().order_by('name')
+    return render(request, 'pages/category_list.html', {'categories': categories})
+
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def category_add_view(request):
+    # 'C'reate - Tambah kategori baru
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Kategori baru berhasil ditambahkan!')
+            return redirect('category_list')
+    else:
+        form = CategoryForm()
+        
+    return render(request, 'pages/category_form.html', {'form': form, 'title': 'Tambah Kategori Baru'})
+
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def category_edit_view(request, pk):
+    # 'U'pdate - Edit kategori
+    category = get_object_or_404(Category, pk=pk)
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Kategori berhasil diperbarui!')
+            return redirect('category_list')
+    else:
+        form = CategoryForm(instance=category)
+        
+    return render(request, 'pages/category_form.html', {'form': form, 'title': f'Edit Kategori: {category.name}'})
+
+@login_required(login_url='login')
+@user_passes_test(is_staff)
+def category_delete_view(request, pk):
+    # 'D'elete - Hapus kategori
+    category = get_object_or_404(Category, pk=pk)
+    
+    if request.method == 'POST':
+        try:
+            category.delete()
+            messages.success(request, 'Kategori berhasil dihapus.')
+        except:
+            messages.error(request, 'Kategori ini tidak bisa dihapus karena masih digunakan oleh produk.')
+        return redirect('category_list')
+        
+    return render(request, 'pages/category_confirm_delete.html', {'category': category})

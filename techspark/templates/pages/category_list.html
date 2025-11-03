@@ -1,0 +1,46 @@
+{% extends 'pages/admin_base.html' %}
+
+{% block title %}Manajemen Kategori{% endblock %}
+
+{% block content %}
+    
+    <div class="content-header">
+        <h1>Manajemen Kategori</h1>
+        <a href="{% url 'category_add' %}" class="btn btn-secondary" style="background: white; color: #4f46e5;">+ Tambah Kategori Baru</a>
+    </div>
+
+    <div class="admin-card">
+        
+        {% if messages %}
+            {% for message in messages %}
+            <div class="message-box {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}">
+            {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Nama Kategori</th>
+                    <th style="width: 20%;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td><strong style="color: #1f2937;">{{ category.name }}</strong></td>
+                    <td class="action-links">
+                        <a href="{% url 'category_edit' category.pk %}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Edit</a>
+                        <a href="{% url 'category_delete' category.pk %}" class="btn btn-danger" style="padding: 0.5rem 1rem;">Hapus</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" style="padding: 2rem; text-align: center;">Belum ada kategori.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

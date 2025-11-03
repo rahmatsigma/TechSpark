@@ -1,19 +1,21 @@
 from django import forms
+from .models import Product, Category
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordChangeForm # Impor form bawaan Django
+from django.contrib.auth.forms import PasswordChangeForm
 from .models import Product
 
 # 1. Form CRUD Produk (Sudah ada)
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image_url', 'stock']
+        fields = ['name', 'category', 'description', 'price', 'image_url', 'stock']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'image_url': forms.URLInput(attrs={'class': 'form-control'}),
             'stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'})
 
         }
         labels = {
@@ -22,6 +24,18 @@ class ProductForm(forms.ModelForm):
             'price': 'Harga (Rupiah)',
             'image_url': 'URL Gambar Produk',
             'stock': 'Stok Produk',
+            'category': 'Kategori Produk',
+        }
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name'] # Hanya field 'name'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': 'Nama Kategori',
         }
 
 # 2. Form untuk ganti Nama

@@ -205,11 +205,18 @@ nav {
 .category-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
+    text-shadow: 2px 2px 8px rgb(255, 255, 255);
 }
 
 .category-card h3 {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
+    color:#f0f9ff;
+}
+
+.category-card p {
+    color: #f0f9ff; 
+    font-size: 0.9rem;
 }
 
 /* Products */
@@ -517,3 +524,47 @@ footer {
     justify-content: center;
     gap: 0.5rem;
 }
+
+/* ==================
+    Filter & Badge Kategori
+================== */
+.category-filters {
+    text-align: center;
+    margin-bottom: 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.category-filters .btn {
+    padding: 0.5rem 1.25rem; /* Bikin tombol filter lebih kecil */
+}
+
+/* Badge Kategori di Kartu Produk */
+.product-category-badge {
+    display: inline-block;
+    background: rgba(183, 77, 255, 0.2); /* Warna ungu */
+    color: #ffffff;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+
+.message-box {
+            color: white; 
+            padding: 1rem; 
+            border-radius: 6px; 
+            margin-bottom: 1.5rem; 
+            text-align: center;
+            font-weight: 500;
+        }
+        .message-success {
+            background: #10b981; /* Hijau (sesuai dashboard) */
+        }
+        .message-error {
+            background: #e11d48; /* Merah (sesuai dashboard) */
+        }

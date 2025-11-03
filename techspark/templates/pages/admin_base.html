@@ -184,8 +184,16 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li>
-                        <a href="{% url 'dashboard' %}" class="active">
+                        <a href="{% url 'dashboard' %}" 
+                            class="{% if 'product' in request.path or request.path == '/dashboard/' %}active{% endif %}">
                             <span>📦</span> Manajemen Produk
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="{% url 'category_list' %}" 
+                            class="{% if 'category' in request.path %}active{% endif %}">
+                            <span>🏷️</span> Manajemen Kategori
                         </a>
                     </li>
                 </ul>

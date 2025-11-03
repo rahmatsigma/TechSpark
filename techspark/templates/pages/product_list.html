@@ -1,6 +1,8 @@
 {% extends 'pages/base.html' %}
 {% load static %}
-{% load humanize %} {% block title %}Semua Produk - TechSpark{% endblock %}
+{% load humanize %}
+
+{% block title %}Semua Produk - TechSpark{% endblock %}
 
 {% block content %}
 
@@ -8,6 +10,17 @@
     
         <h2 class="section-title">Semua Produk Kami</h2>
         
+        <div class="category-filters">
+            <a href="{% url 'product_list' %}" class="btn {% if not selected_category %}btn-primary{% else %}btn-secondary{% endif %}">
+                Semua
+            </a>
+            {% for category in categories %}
+                <a href="?category={{ category.id }}" class="btn {% if selected_category.id == category.id %}btn-primary{% else %}btn-secondary{% endif %}">
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+
         <div class="products">
             
             {% for product in products %}
@@ -15,6 +28,10 @@
                 <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
                 <div class="product-info">
                     <h3 class="product-name">{{ product.name }}</h3>
+                    
+                    {% if product.category %}
+                        <span class="product-category-badge">{{ product.category.name }}</span>
+                    {% endif %}
                     
                     <div class="product-price-stock">
                         <p class="product-price">Rp {{ product.price|intcomma }}</p>
@@ -33,9 +50,7 @@
             </div>
             {% empty %}
             <p style="text-align: center; font-size: 1.2rem; color: #b9d5f0; grid-column: 1 / -1;">
-                Belum ada produk yang tersedia.
-                <br>
-                Coba tambahkan produk baru melalui <a href="{% url 'dashboard' %}" style="color: #33c8ff;">Panel Admin</a>.
+                Tidak ada produk untuk kategori ini.
             </p>
             {% endfor %}
 

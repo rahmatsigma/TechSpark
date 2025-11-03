@@ -19,27 +19,53 @@
 
     <div class="container" id="kategori">
         <h2 class="section-title">Belanja Berdasarkan Kategori</h2>
+        
         <div class="categories">
-            <div class="category-card">
-                <div class="category-icon">💻</div>
-                <h3>Laptop</h3>
-                <p>Performa tinggi untuk kerja & gaming</p>
-            </div>
-            <div class="category-card">
-                <div class="category-icon">📱</div>
-                <h3>Smartphone</h3>
-                <p>Teknologi mobile terdepan</p>
-            </div>
-            <div class="category-card">
-                <div class="category-icon">🎧</div>
-                <h3>Audio</h3>
-                <p>Kualitas suara premium</p>
-            </div>
-            <div class="category-card">
-                <div class="category-icon">📷</div>
-                <h3>Kamera</h3>
-                <p>Abadikan momen terbaik</p>
-            </div>
+            
+            {% for category in categories %}
+                {% if 'laptop' in category.name|lower %}
+                <a href="{% url 'product_list' %}?category={{ category.id }}" class="category-card">
+                    <div class="category-icon">💻</div>
+                    <h3>{{ category.name }}</h3>
+                    <p>Performa tinggi & gaming</p>
+                </a>
+                
+                {% elif 'smartphone' in category.name|lower %}
+                <a href="{% url 'product_list' %}?category={{ category.id }}" class="category-card">
+                    <div class="category-icon">📱</div>
+                    <h3>{{ category.name }}</h3>
+                    <p>Teknologi mobile terdepan</p>
+                </a>
+                
+                {% elif 'audio' in category.name|lower %}
+                <a href="{% url 'product_list' %}?category={{ category.id }}" class="category-card">
+                    <div class="category-icon">🎧</div>
+                    <h3>{{ category.name }}</h3>
+                    <p>Kualitas suara premium</p>
+                </a>
+                
+                {% elif 'camera' in category.name|lower %}
+                <a href="{% url 'product_list' %}?category={{ category.id }}" class="category-card">
+                    <div class="category-icon">📷</div>
+                    <h3>{{ category.name }}</h3>
+                    <p>Abadikan momen terbaik</p>
+                </a>
+
+                {% else %}
+                <a href="{% url 'product_list' %}?category={{ category.id }}" class="category-card">
+                    <div class="category-icon">📦</div>
+                    <h3>{{ category.name }}</h3>
+                </a>
+                {% endif %}
+
+            {% endfor %}
+
+            {% if not categories %}
+            <p style="text-align: center; color: #b9d5f0; grid-column: 1 / -1;">
+                Belum ada kategori. Silakan tambahkan di panel admin.
+            </p>
+            {% endif %}
+
         </div>
     </div>
 

@@ -31,4 +31,9 @@ urlpatterns = [
     path('dashboard/product/edit/<int:pk>/', views.product_edit_view, name='product_edit'),
     # 'D'elete
     path('dashboard/product/delete/<int:pk>/', views.product_delete_view, name='product_delete'),
+
+    path('dashboard/categories/', views.category_list_view, name='category_list'),
+    path('dashboard/category/add/', views.category_add_view, name='category_add'),
+    path('dashboard/category/edit/<int:pk>/', views.category_edit_view, name='category_edit'),
+    path('dashboard/category/delete/<int:pk>/', views.category_delete_view, name='category_delete'),
 ]
