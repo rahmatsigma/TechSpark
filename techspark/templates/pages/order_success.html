@@ -1,4 +1,6 @@
 {% extends 'pages/base.html' %}
+{% load static %}
+{% load humanize %}
 
 {% block title %}Pesanan Berhasil - TechSpark{% endblock %}
 
@@ -7,12 +9,35 @@
     
     <div style="font-size: 4rem;">🎉</div>
     
-    <h2 class="section-title" style="margin-top: 1rem; margin-bottom: 1rem;">Terima Kasih!</h2>
+    <h2 class="section-title" style="margin-top: 1rem; margin-bottom: 1rem;">Pesanan Berhasil Dibuat!</h2>
     
-    <p style="font-size: 1.25rem; color: #b9d5f0; margin-bottom: 3rem;">
-        Pesanan Anda telah berhasil kami terima dan akan segera diproses.
+    <p style="font-size: 1.25rem; color: #b9d5f0; margin-bottom: 1rem;">
+        Terima kasih atas pesanan Anda, <strong style="color: #33c8ff;">#{{ order.id }}</strong>.
     </p>
-    
-    <a href="{% url 'home' %}" class="btn btn-primary">Kembali ke Beranda</a>
+
+    <div style="background: #141d2e; border-radius: 1rem; padding: 2rem; max-width: 600px; margin: 2rem auto; text-align: left;">
+        <h3 style="color: #f0f9ff; margin-bottom: 1rem;">Rincian Pembayaran</h3>
+        <p style="color: #b9d5f0; margin-bottom: 0.5rem;">Metode: <strong>{{ order.get_payment_method_display }}</strong></p>
+        <p style="color: #b9d5f0;">Total: <strong style="color: #33c8ff; font-size: 1.2rem;">Rp {{ order.total_price|intcomma }}</strong></p>
+
+        {% if order.payment_method == 'qris' %}
+            <h4 style="color: #f0f9ff; margin-top: 2rem; margin-bottom: 1rem;">Instruksi Pembayaran QRIS</h4>
+            <p style="color: #b9d5f0;">Silakan scan QR Code di bawah ini untuk menyelesaikan pembayaran Anda:</p>
+            <img src="{% static 'images/qris.png' %}" alt="QRIS Code" style="width: 100%; max-width: 300px; margin: 1.5rem auto; display: block; border-radius: 8px;">
+            <p style="color: #b9d5f0; font-size: 0.9rem;">
+                *Pembayaran akan otomatis terkonfirmasi dalam beberapa menit.
+            </p>
+        {% else %}
+            <h4 style="color: #f0f9ff; margin-top: 2rem; margin-bottom: 1rem;">Instruksi Pembayaran COD</h4>
+            <p style="color: #b9d5f0;">
+                Pesanan Anda akan segera dikirimkan. Silakan siapkan uang tunai sebesar 
+                <strong style="color: #33c8ff;">Rp {{ order.total_price|intcomma }}</strong> 
+                untuk pembayaran saat barang diterima.
+            </p>
+        {% endif %}
+
+        <a href="{% url 'home' %}" class="btn btn-primary" style="margin-top: 2rem; display: inline-block;">Kembali ke Beranda</a>
     </div>
+
+</div>
 {% endblock %}

@@ -4,6 +4,11 @@
 
 {% block title %}Checkout - TechSpark{% endblock %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/co.css' %}">
+{% endblock %}
+
+
 {% block content %}
 <div class="container" style="padding-top: 5rem; min-height: 80vh;">
     <h2 class="section-title">Checkout</h2>
@@ -23,6 +28,21 @@
                     {% endif %}
                 </div>
                 {% endfor %}
+
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label style="margin-bottom: 1rem;">Metode Pembayaran</label>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="cod" required checked>
+                            <span class="payment-radio-label">COD (Bayar di Tempat)</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="qris" required>
+                            <span class="payment-radio-label">QRIS</span>
+                        </label>
+                    </div>
+                </div>
+                
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Buat Pesanan</button>
             </form>
         </div>
@@ -32,8 +52,7 @@
             {% for item in items %}
             <div class="summary-item">
                 <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
-                <div class.summary-item-info>
-                    <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+                <div class="summary-item-info"> <span>{{ item.product.name }} (x{{ item.quantity }})</span>
                     <strong>Rp {{ item.subtotal|intcomma }}</strong>
                 </div>
             </div>
@@ -48,49 +67,4 @@
     </div>
 </div>
 
-<style>
-    .checkout-layout {
-        display: grid;
-        grid-template-columns: 2fr 1fr; /* 66% form, 33% summary */
-        gap: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    .form-group {
-        margin-bottom: 1.5rem;
-        text-align: left;
-    }
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #f0f9ff;
-    }
-    .form-control {
-        width: 100%;
-        padding: 1rem;
-        border-radius: 0.75rem;
-        border: 1px solid rgba(51, 200, 255, 0.3);
-        background: rgba(10, 15, 26, 0.5);
-        color: #f0f9ff;
-        font-size: 1rem;
-    }
-    .form-control:focus { outline: none; border-color: #33c8ff; }
-    
-    .checkout-summary-container {
-        background: #141d2e;
-        padding: 2rem;
-        border-radius: 1rem;
-        align-self: start; /* Bikin nempel di atas */
-    }
-    .summary-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-    .summary-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
-    .summary-item-info { display: flex; justify-content: space-between; flex-grow: 1; }
-    .summary-total { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
-
-    @media (max-width: 900px) {
-        .checkout-layout { grid-template-columns: 1fr; }
-        .checkout-summary-container { grid-row: 1; } /* Pindah summary ke atas di mobile */
-    }
-</style>
 {% endblock %}

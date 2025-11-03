@@ -13,7 +13,7 @@ urlpatterns = [
     path('keranjang/update/<int:item_id>/', views.update_cart_quantity_view, name='update_cart_quantity'),
     path('keranjang/remove/<int:item_id>/', views.remove_from_cart_view, name='remove_from_cart'),
     path('checkout/', views.checkout_view, name='checkout'),
-    path('order-success/', views.order_success_view, name='order_success'),
+    path('order-success/<int:order_id>/', views.order_success_view, name='order_success'),
 
     # === URL DASHBOARD ADMIN KUSTOM (BARU) ===
     path('dashboard/', views.dashboard_view, name='dashboard'),

@@ -86,6 +86,15 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_paid = models.BooleanField(default=False) # Nanti bisa untuk payment gateway
 
+    PAYMENT_CHOICES = [
+        ('cod', 'Cash On Delivery (COD)'),
+        ('qris', 'QRIS'),
+    ]
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='cod')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_paid = models.BooleanField(default=False)
+
     def __str__(self):
         return f"Order #{self.id} oleh {self.user.username}"
 
