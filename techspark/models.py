@@ -93,7 +93,11 @@ class Order(models.Model):
     shipping_address = models.TextField()
     total_price = models.DecimalField(max_digits=10, decimal_places=0)
     
-    payment_method = models.CharField(max_length=10, choices=[('cod', 'COD'), ('qris', 'QRIS')], default='cod')
+    PAYMENT_CHOICES = [
+        ('cod', 'Cash On Delivery (COD)'),
+        ('qris', 'QRIS'),
+    ]
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='cod')
     
     # ▼▼▼ TAMBAHKAN FIELD INI ▼▼▼
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -104,7 +108,9 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.id} oleh {self.user.username}"
 
-
+# ==================================
+#  ▼▼▼ 2. UPDATE MODEL ORDERITEM ▼▼▼
+# ==================================
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     
@@ -120,7 +126,9 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.product_name}"
 
-
+# ==================================
+#  ▼▼▼ 3. BUAT MODEL RATING BARU ▼▼▼
+# ==================================
 class Rating(models.Model):
     # Kita hubungkan rating ke 'OrderItem'
     # Satu OrderItem hanya bisa punya satu rating

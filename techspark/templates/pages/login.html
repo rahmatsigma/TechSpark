@@ -17,18 +17,6 @@
 
         <div class="error-message" id="errorMessage"></div>
 
-        {% if messages %}
-            <div style="margin-bottom: 20px;">
-            {% for message in messages %}
-                
-                <div class="message-box {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}">
-                    {{ message }}
-                </div>
-                
-            {% endfor %}
-            </div>
-        {% endif %}
-
         <form id="loginForm" method="POST" action="{% url 'login' %}">
             {% csrf_token %}
             

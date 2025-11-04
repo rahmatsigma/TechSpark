@@ -25,8 +25,13 @@
 
         {% for item in order.items.all %}
         <div class="order-item">
-            <img src="{{ item.product.image_url }}" alt="{{ item.product_name }}">
-            <div class.order-item-info>
+            {% if item.product and item.product.image_url %}
+                <img src="{{ item.product.image_url }}" alt="{{ item.product_name }}">
+            {% else %}
+                <img src="{% static 'images/placeholder.png' %}" alt="Gambar tidak tersedia" style="background: #0a0f1a;">
+            {% endif %}
+
+            <div class="order-item-info">
                 <span style="font-weight: 600;">{{ item.product_name }}</span>
                 <span style="color: #b9d5f0; font-size: 0.9rem;">{{ item.quantity }} x Rp {{ item.product_price|intcomma }}</span>
             </div>
@@ -50,14 +55,19 @@
     {% endfor %}
 </div>
 
+{% endblock %}
+
+
+{% block extra_head %}
 <style>
     .order-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    /* CSS untuk badge status */
     .order-status-completed { color: #2ecc71; font-weight: 600; }
     .order-status-cancelled { color: #e74c3c; font-weight: 600; }
     .order-status-pending, .order-status-processing, .order-status-shipped { color: #f39c12; font-weight: 600; }
     
     .order-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-    .order-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+    .order-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; background: #0a0f1a; }
     .order-item-info { flex-grow: 1; }
     .order-item-rating .btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
     .rating-done { font-weight: 600; color: #f39c12; }

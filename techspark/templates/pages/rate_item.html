@@ -9,35 +9,50 @@
     <div class="newsletter" style="max-width: 600px; margin: 0 auto;">
         <h2 class="section-title" style="margin-bottom: 0.5rem; text-align: left;">Beri Rating</h2>
         <p style="font-size: 1.1rem; color: #b9d5f0; text-align: left; margin-bottom: 2rem;">
-            Untuk produk: <strong>{{ item.product.name }}</strong>
+            Untuk produk: <strong>{{ item.product_name }}</strong>
         </p>
 
         <form method="POST" class="rating-form">
             {% csrf_token %}
             
-            {% for field in form %}
             <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <small style="color: #e74c3c; display: block; margin-top: 5px;">{{ field.errors|first }}</small>
+                <label>{{ form.rating.label }}</label>
+                <div id="id_rating_stars">
+                    {% for radio in form.rating %}
+                    {{ radio.tag }}
+                    <label for="{{ radio.id_for_label }}">⭐</label>
+                    {% endfor %}
+                </div>
+                {% if form.rating.errors %}
+                    <small style="color: #e74c3c; display: block; margin-top: 5px;">{{ form.rating.errors|first }}</small>
                 {% endif %}
             </div>
-            {% endfor %}
+
+            <div class="form-group">
+                <label for="{{ form.review_text.id_for_label }}">{{ form.review_text.label }}</label>
+                {{ form.review_text }}
+                {% if form.review_text.errors %}
+                    <small style="color: #e74c3c; display: block; margin-top: 5px;">{{ form.review_text.errors|first }}</small>
+                {% endif %}
+            </div>
             
             <button type="submit" class="btn btn-primary" style="width: 100%;">Kirim Rating</button>
         </form>
     </div>
 </div>
+{% endblock %}
 
+
+{% block extra_head %}
 <style>
-    .rating-form .form-group { text-align: left; }
+    .rating-form .form-group { text-align: left; margin-bottom: 1.5rem; }
     .rating-form label {
         display: block;
         margin-bottom: 0.5rem;
         font-weight: 600;
         color: #f0f9ff;
     }
+    /* Style untuk Textarea */
     .rating-form .form-control {
         width: 100%;
         padding: 1rem;
@@ -48,23 +63,26 @@
         font-size: 1rem;
     }
     
-    /* Style untuk Radio Button Bintang */
-    .rating-form input[type="radio"] { display: none; }
-    .rating-form label[for*="rating_"] {
-        display: inline-block;
-        font-size: 2rem;
-        color: #666;
-        cursor: pointer;
-        transition: color 0.2s;
-    }
-    .rating-form div[id="id_rating"] {
+    /* Style untuk Radio Button Bintang (BARU) */
+    #id_rating_stars {
         display: flex;
         flex-direction: row-reverse; /* Bikin bintangnya dari kanan ke kiri */
-        justify-content: flex-end;
+        justify-content: flex-end; /* Bikin nempel kanan */
     }
-    .rating-form div[id="id_rating"] label:hover,
-    .rating-form div[id="id_rating"] label:hover ~ label,
-    .rating-form div[id="id_rating"] input[type="radio"]:checked ~ label {
+    #id_rating_stars input[type="radio"] { display: none; } /* Sembunyikan radio button asli */
+    
+    #id_rating_stars label {
+        display: inline-block;
+        font-size: 2rem;
+        color: #666; /* Bintang mati */
+        cursor: pointer;
+        transition: color 0.2s;
+        padding: 0 0.1rem;
+    }
+    /* Logika hover bintang */
+    #id_rating_stars label:hover,
+    #id_rating_stars label:hover ~ label,
+    #id_rating_stars input[type="radio"]:checked ~ label {
         color: #f39c12; /* Warna bintang kuning */
     }
 </style>

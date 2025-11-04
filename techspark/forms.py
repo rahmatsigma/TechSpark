@@ -89,15 +89,18 @@ class AddressForm(forms.ModelForm):
         self.fields['postal_code'].label = "Kode Pos"
 
 class RatingForm(forms.ModelForm):
+    # Buat pilihan 1-5
+    RATING_CHOICES = [(5, '5'), (4, '4'), (3, '3'), (2, '2'), (1, '1')]
+    
     rating = forms.ChoiceField(
-        choices=[(5, '⭐⭐⭐⭐⭐'), (4, '⭐⭐⭐⭐'), (3, '⭐⭐⭐'), (2, '⭐⭐'), (1, '⭐')],
-        widget=forms.RadioSelect,
+        choices=RATING_CHOICES,
+        widget=forms.RadioSelect, # Tetap pakai RadioSelect
         label="Rating Anda"
     )
     
     class Meta:
         model = Rating
-        fields = ['rating', 'review_text']
+        fields = ['rating', 'review_text'] # Hanya 2 field ini yg diisi user
         widgets = {
             'review_text': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Tulis ulasan Anda...'}),
         }
@@ -106,7 +109,7 @@ class RatingForm(forms.ModelForm):
         }
 
 
-class OrderForm(forms.ModelForm):
+class OrderForm(forms.ModelForm): 
     class Meta:
         model = Order
         # Kita hanya ingin admin bisa mengedit 'status'

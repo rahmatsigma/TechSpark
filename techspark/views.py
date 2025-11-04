@@ -13,7 +13,7 @@ from .forms import ProductForm
 from .models import Product, Category
 from .forms import ProductForm, CategoryForm
 from .models import Product, Category, Cart, CartItem, Address, Order, OrderItem, Rating
-from .forms import AddressForm, RatingForm
+from .forms import AddressForm, RatingForm, OrderForm
 from .models import Order
 from .forms import OrderForm
 from django.contrib.auth.decorators import login_required
