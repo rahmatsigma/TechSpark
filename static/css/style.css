@@ -568,3 +568,13 @@ footer {
         .message-error {
             background: #e11d48; /* Merah (sesuai dashboard) */
         }
+
+
+.product-card-link {
+    text-decoration: none; 
+    color: inherit; 
+}
+
+.product-card-link:hover .product-name {
+    color: #33c8ff;
+}

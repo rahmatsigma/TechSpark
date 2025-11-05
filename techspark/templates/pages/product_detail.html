@@ -1,0 +1,174 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ product.name }} - TechSpark{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 5rem; min-height: 80vh;">
+    <div class="product-detail-layout">
+        
+        <div class="product-detail-image">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+        </div>
+
+        <div class="product-detail-info">
+            {% if product.category %}
+                <span class="product-category-badge">{{ product.category.name }}</span>
+            {% endif %}
+            
+            <h1>{{ product.name }}</h1>
+            
+            <div class="detail-rating-summary">
+                <span class="star-rating">⭐ {{ avg_rating|floatformat:1 }}</span>
+                <span class="review-count">({{ review_count }} Ulasan)</span>
+            </div>
+
+            <div class="detail-price-stock">
+                <span class="detail-price">Rp {{ product.price|intcomma }}</span>
+                <span class="product-stock" style="background: #141d2e;">Stok: {{ product.stock }}</span>
+            </div>
+
+            <p class="detail-description">{{ product.description|truncatewords:40|linebreaks }}</p>
+
+            <div class="detail-actions">
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary" style="flex-grow: 1;">
+                    <i class="bi bi-cart-plus"></i> Tambah ke Keranjang
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="product-reviews-container">
+        <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;">Ulasan Pelanggan ({{ review_count }})</h2>
+        
+        {% for review in reviews %}
+        <div class="review-card">
+            <div class="review-header">
+                <strong>{{ review.user.first_name|default:review.user.username }}</strong>
+                <span class="star-rating">⭐ {{ review.rating }}/5</span>
+            </div>
+            <p class="review-text">{{ review.review_text|linebreaks }}</p>
+            <span class="review-date">{{ review.created_at|date:"d M Y" }}</span>
+        </div>
+        {% empty %}
+        <p style="color: #b9d5f0;">Belum ada ulasan untuk produk ini.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+    .product-detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        max-width: 1200px;
+        margin: 0 auto 4rem auto;
+    }
+    .product-detail-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 1rem;
+        background: #fff; /* Latar putih untuk gambar */
+    }
+    .product-detail-info h1 {
+        font-size: 2.5rem;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+    .detail-rating-summary {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+        color: #f39c12;
+    }
+    .detail-rating-summary .review-count {
+        color: #b9d5f0;
+        font-weight: 500;
+    }
+    .detail-price-stock {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(20, 29, 46, 0.7);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .detail-price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #33c8ff;
+    }
+    .detail-description {
+        color: #b9d5f0;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+    .detail-actions {
+        display: flex;
+    }
+    .detail-actions .btn {
+        padding: 1rem;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    /* Bagian Ulasan */
+    .product-reviews-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        border-top: 1px solid rgba(51, 200, 255, 0.2);
+        padding-top: 3rem;
+    }
+    .review-card {
+        background: #141d2e;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(51, 200, 255, 0.1);
+    }
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+    .review-header strong {
+        color: #fff;
+        font-size: 1.1rem;
+    }
+    .review-header .star-rating {
+        color: #f39c12;
+        font-weight: 600;
+    }
+    .review-text {
+        color: #b9d5f0;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    .review-date {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    /* Responsive untuk HP */
+    @media (max-width: 900px) {
+        .product-detail-layout {
+            grid-template-columns: 1fr; /* Tumpuk jadi 1 kolom */
+        }
+        .product-detail-info h1 { font-size: 2rem; }
+        .detail-price { font-size: 2rem; }
+    }
+</style>
+{% endblock %}

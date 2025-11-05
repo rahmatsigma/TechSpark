@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404
+from django.db.models import Avg
 from .models import Product, Cart, CartItem
 from .models import Product
 from .forms import ProductForm
@@ -514,3 +515,21 @@ def rate_item_view(request, item_id):
         'item': item
     }
     return render(request, 'pages/rate_item.html', context)
+
+
+def product_detail_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    
+    reviews = Rating.objects.filter(product=product).order_by('-created_at')
+    
+    avg_rating_data = reviews.aggregate(Avg('rating'))
+    avg_rating = avg_rating_data['rating__avg'] or 0.0
+    review_count = reviews.count()
+
+    context = {
+        'product': product,
+        'reviews': reviews,
+        'avg_rating': avg_rating,
+        'review_count': review_count
+    }
+    return render(request, 'pages/product_detail.html', context)
