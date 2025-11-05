@@ -20,7 +20,9 @@
                 <div id="id_rating_stars">
                     {% for radio in form.rating %}
                     {{ radio.tag }}
-                    <label for="{{ radio.id_for_label }}">⭐</label>
+                    <label for="{{ radio.id_for_label }}">
+                        <i class="bi bi-star-fill"></i>
+                    </label>
                     {% endfor %}
                 </div>
                 {% if form.rating.errors %}
@@ -66,24 +68,28 @@
     /* Style untuk Radio Button Bintang (BARU) */
     #id_rating_stars {
         display: flex;
-        flex-direction: row-reverse; /* Bikin bintangnya dari kanan ke kiri */
-        justify-content: flex-end; /* Bikin nempel kanan */
+        flex-direction: row-reverse; 
+        justify-content: flex-end; 
     }
     #id_rating_stars input[type="radio"] { display: none; } /* Sembunyikan radio button asli */
     
     #id_rating_stars label {
         display: inline-block;
-        font-size: 2rem;
-        color: #666; /* Bintang mati */
         cursor: pointer;
         transition: color 0.2s;
-        padding: 0 0.1rem;
+        padding: 0 0.2rem; /* Jarak antar bintang */
+        color: #e0e0e0; /* Bintang mati (abu-abu muda, mirip gambar) */
     }
+    #id_rating_stars label i {
+        font-size: 2rem; /* Atur ukuran ikon */
+        color: inherit; /* Warisi warna dari label */
+    }
+    
     /* Logika hover bintang */
     #id_rating_stars label:hover,
     #id_rating_stars label:hover ~ label,
     #id_rating_stars input[type="radio"]:checked ~ label {
-        color: #f39c12; /* Warna bintang kuning */
+        color: #facc15; /* Warna bintang kuning (mirip gambar) */
     }
 </style>
 {% endblock %}
