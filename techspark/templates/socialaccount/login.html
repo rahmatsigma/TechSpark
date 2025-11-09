@@ -1,0 +1,27 @@
+{% extends 'pages/base_auth.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}Konfirmasi Login Google{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="logo">
+        <h1>TechSpark</h1>
+        <p>Login dengan Akun Google</p>
+    </div>
+
+    <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">
+        Anda akan login menggunakan akun pihak ketiga dari Google.
+    </p>
+
+    <form method="POST" action="{% provider_login_url 'google' %}">
+        {% csrf_token %}
+        <button type="submit" class="login-btn">Lanjutkan dengan Google</button>
+    </form>
+
+    <div class="back-home" style="margin-top: 1.5rem;">
+         <a href="{% url 'login' %}">← Batal dan Kembali ke Login</a>
+    </div>
+</div>
+{% endblock %}

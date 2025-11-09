@@ -14,6 +14,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATE_DIR = BASE_DIR / 'techspark/templates'
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,8 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'techspark',
 ]
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -56,7 +64,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATE_DIR,],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -109,6 +117,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    # Dibutuhkan untuk login di admin Django
+    'django.contrib.auth.backends.ModelBackend',
+
+    # 'allauth' specific authentication methods, e.g. login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -136,3 +151,32 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+
+# === PENGATURAN DJANGO-ALLAUTH ===
+
+# Arahkan user ke 'home' setelah login
+LOGIN_REDIRECT_URL = 'home'
+# Arahkan user ke 'login' setelah logout
+LOGOUT_REDIRECT_URL = 'login' 
+
+# Pengaturan spesifik untuk 'allauth'
+ACCOUNT_EMAIL_REQUIRED = True        # Wajib pakai email
+ACCOUNT_USERNAME_REQUIRED = False    # Kita tidak pakai username
+ACCOUNT_AUTHENTICATION_METHOD = 'email' # Login pakai email
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # 'none' untuk development (biar gampang)
+ACCOUNT_UNIQUE_EMAIL = True          # Pastikan email unik
+
+# Pengaturan spesifik untuk Google
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True, # Untuk keamanan
+    }
+}
