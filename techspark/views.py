@@ -24,7 +24,7 @@ def is_staff(user):
 
 # View beranda 
 def home_view(request):
-    latest_products = Product.objects.all().order_by('-created_at')[:4]
+    latest_products = Product.objects.all().order_by('-created_at')[:5]
     main_categories = Category.objects.all()[:4]    
     context = {
         'products': latest_products,

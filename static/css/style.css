@@ -578,3 +578,27 @@ footer {
 .product-card-link:hover .product-name {
     color: #33c8ff;
 }
+
+
+.product-card-see-all {
+    background: transparent;
+    border: none;
+    padding: 0; 
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-card-see-all:hover {
+    border: none;
+    background: transparent;
+    transform: none;
+    box-shadow: none;
+}
+
+.product-card-see-all .btn {
+    padding: 0.75rem 1.5rem; 
+    width: auto; 
+    flex: none;
+}

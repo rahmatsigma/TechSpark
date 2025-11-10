@@ -1,7 +1,7 @@
 {% extends 'pages/base.html' %}
 {% load static %}
 
-{% block title %}TechSpark - Beranda{% endblock %}
+{% load humanize %} {% block title %}TechSpark - Beranda{% endblock %}
 
 {% block content %}
 
@@ -71,22 +71,46 @@
 
     <div class="container" id="produk">
         <h2 class="section-title">Produk Pilihan</h2>
-        <div class="products" id="products-container">
-            </div>
         
-        <div class="section-cta">
-            <a href="{% url 'product_list' %}" class="btn btn-secondary">Lihat Semua Produk</a>
-        </div>
-    </div>
+        <div class="products">
+            
+            {% for product in products %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.pk %}" class="product-card-link">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                </a>
+                
+                <div class="product-info">
+                    <a href="{% url 'product_detail' product.pk %}" class="product-card-link">
+                        <h3 class="product-name">{{ product.name }}</h3>
+                    </a>
+                    
+                    {% if product.category %}
+                        <span class="product-category-badge">{{ product.category.name }}</span>
+                    {% endif %}
+                    
+                    <div class="product-price-stock">
+                        <p class="product-price">Rp {{ product.price|intcomma }}</p>
+                        <span class="product-stock">Stok: {{ product.stock }}</span>
+                    </div>
 
-    <div class="container">
-        <div class="newsletter">
-            <h2>Dapatkan Penawaran Terbaru</h2>
-            <p>Daftar newsletter dan dapatkan diskon hingga 30% untuk pembelian pertama!</p>
-            <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
-                <input type="email" placeholder="Masukkan email Anda" required>
-                <button type="submit" class="btn btn-primary">Subscribe</button>
-            </form>
+                    <div class="product-btn-group">
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-secondary btn-cart">
+                            <i class="bi bi-cart-plus"></i> Cart
+                        </a>
+                        <button class="btn btn-primary btn-buy" onclick="alert('Fitur Beli segera hadir!')">
+                            Beli
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="product-card product-card-see-all">
+                <a href="{% url 'product_list' %}" class="btn btn-secondary">
+                    Lihat Semua Produk &rarr;
+                </a>
+            </div>
+
         </div>
     </div>
 
