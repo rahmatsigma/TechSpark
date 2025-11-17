@@ -602,3 +602,38 @@ footer {
     width: auto; 
     flex: none;
 }
+
+/* ... (semua kode style.css kamu) ... */
+
+/* ==================
+   Search Form
+================== */
+.search-form {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 800px;
+    margin: 0 auto 2.5rem auto; /* Posisi di tengah, di atas filter */
+}
+
+.search-input {
+    flex-grow: 1; /* Bikin input-nya memanjang */
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(51, 200, 255, 0.3);
+    background: rgba(10, 15, 26, 0.5);
+    color: #f0f9ff;
+    font-size: 1rem;
+}
+.search-input:focus {
+    outline: none;
+    border-color: #33c8ff;
+}
+
+.search-btn {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+.search-btn i {
+    font-size: 1.1rem;
+    vertical-align: middle;
+}

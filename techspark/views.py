@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
+from django.db.models import Q
 from .models import Product, Cart, CartItem
 from .models import Product
 from .forms import ProductForm
@@ -103,33 +104,40 @@ def register_view(request):
 
     return render(request, 'pages/register.html')
 
-# View list produk 
+
 def product_list_view(request):
-    # 1. Ambil ID kategori yang dipilih dari URL (jika ada)
+    products = Product.objects.all()
     selected_category_id = request.GET.get('category')
+    search_query = request.GET.get('q')
     
+    selected_category = None
     if selected_category_id:
-        # 2. Jika ada, filter produk berdasarkan ID kategori
-        products = Product.objects.filter(category__id=selected_category_id).order_by('-created_at')
+        products = products.filter(category__id=selected_category_id)
         try:
             selected_category = Category.objects.get(id=selected_category_id)
         except Category.DoesNotExist:
-            selected_category = None
-    else:
-        # 3. Jika tidak, tampilkan semua produk
-        products = Product.objects.all().order_by('-created_at')
-        selected_category = None
+            pass
 
-    # 4. Ambil semua kategori untuk tombol filter
+    if search_query:
+        products = products.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
     categories = Category.objects.all()
-    
+    products = products.order_by('-created_at')
+
     context = {
         'products': products,
         'categories': categories,
-        'selected_category': selected_category
+        'selected_category': selected_category,
+        'search_query': search_query,
     }
+        # HTMX
+    if request.headers.get('HX-Request'):
+        return render(request, 'partials/product_grid.html', context)
+    
     return render(request, 'pages/product_list.html', context)
-
 
 # === VIEWS DASHBOARD ADMIN ===
 

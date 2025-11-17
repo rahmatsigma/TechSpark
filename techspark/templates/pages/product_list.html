@@ -9,58 +9,46 @@
     <div class="container" style="padding-top: 5rem; min-height: 50vh;">
     
         <h2 class="section-title">Semua Produk Kami</h2>
+
+        <form method="GET" action="{% url 'product_list' %}" class="search-form"
+            hx-get="{% url 'product_list' %}"  
+            hx-trigger="keyup changed delay:500ms from:#search-input" 
+            hx-target="#product-grid"  
+            hx-swap="innerHTML"
+            hx-indicator="#loading-spinner" 
+        >
+            {% if selected_category %}
+                <input type="hidden" name="category_filter" value="{{ selected_category.id }}">
+            {% endif %}
+            
+            <input type="text" name="q" class="search-input" placeholder="Cari produk (misal: 'Samsung')..." 
+                value="{{ search_query|default:'' }}"
+                id="search-input" hx-include="[name='category_filter']" >
+            <button type="submit" class="btn btn-primary search-btn">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
         
         <div class="category-filters">
-            <a href="{% url 'product_list' %}" class="btn {% if not selected_category %}btn-primary{% else %}btn-secondary{% endif %}">
+            <a href="{% url 'product_list' %}{% if search_query %}?q={{ search_query }}{% endif %}" 
+               class="btn {% if not selected_category %}btn-primary{% else %}btn-secondary{% endif %}">
                 Semua
             </a>
+            
             {% for category in categories %}
-                <a href="?category={{ category.id }}" class="btn {% if selected_category.id == category.id %}btn-primary{% else %}btn-secondary{% endif %}">
+                <a href="?category={{ category.id }}{% if search_query %}&q={{ search_query }}{% endif %}" 
+                   class="btn {% if selected_category.id == category.id %}btn-primary{% else %}btn-secondary{% endif %}">
                     {{ category.name }}
                 </a>
             {% endfor %}
         </div>
 
-        <div class="products">
-            
-            {% for product in products %}
-            <div class="product-card">
-                
-                <a href="{% url 'product_detail' product.pk %}" class="product-card-link">
-                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
-                </a>
+        <div id="loading-spinner" class="htmx-indicator" style="text-align: center; margin: 2rem 0;">
+            <span style="color: #33c8ff; font-weight: 500;">Memuat...</span>
+        </div>
 
-                <div class="product-info">
-                    
-                    <a href="{% url 'product_detail' product.pk %}" class="product-card-link">
-                        <h3 class="product-name">{{ product.name }}</h3>
-                    </a>
-                    
-                    {% if product.category %}
-                        <span class="product-category-badge">{{ product.category.name }}</span>
-                    {% endif %}
-                    
-                    <div class="product-price-stock">
-                        <p class="product-price">Rp {{ product.price|intcomma }}</p>
-                        <span class="product-stock">Stok: {{ product.stock }}</span>
-                    </div>
-
-                    <div class="product-btn-group">
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-secondary btn-cart">
-                            <i class="bi bi-cart-plus"></i> Cart
-                        </a>
-                        <button class="btn btn-primary btn-buy" onclick="alert('Fitur Beli segera hadir!')">
-                            Beli
-                        </button>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <p style="text-align: center; font-size: 1.2rem; color: #b9d5f0; grid-column: 1 / -1;">
-                Tidak ada produk untuk kategori ini.
-            </p>
-            {% endfor %}
-
+        <div class="products" id="product-grid">
+            {% include 'partials/product_grid.html' %}
         </div>
     </div>
 
