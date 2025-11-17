@@ -15,6 +15,8 @@ urlpatterns = [
     path('keranjang/remove/<int:item_id>/', views.remove_from_cart_view, name='remove_from_cart'),
     path('checkout/', views.checkout_view, name='checkout'),
     path('order-success/<int:order_id>/', views.order_success_view, name='order_success'),
+    path('orders/history/', views.order_history_view, name='order_history'),
+    path('about/', views.about_view, name='about'),
 
 
     # === URL DASHBOARD ADMIN KUSTOM (BARU) ===

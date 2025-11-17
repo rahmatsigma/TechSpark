@@ -32,6 +32,12 @@ def home_view(request):
     }
     return render(request, 'pages/beranda.html', context)
 
+def about_view(request):
+    """
+    View untuk halaman About Us
+    """
+    return render(request, 'pages/about.html')
+
 # === FUNGSI LOGIN  ===
 def login_view(request):
     if request.method == 'POST':
