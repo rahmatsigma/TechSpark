@@ -62,7 +62,7 @@
 
 .values-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr); 
     gap: 2rem;
     margin-top: 2rem;
 }
@@ -195,24 +195,21 @@
 }
 
 /* Media Queries (Responsive) */
+@media (max-width: 1024px) {
+    .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
-    .about-hero h1 {
-        font-size: 2rem;
-    }
-
-    .about-hero p {
-        font-size: 1rem;
-    }
-
-    .story-section {
-        padding: 2rem;
-    }
-
-    /* =================================
-     ▼▼▼ TIM JADI 1 KOLOM DI HP ▼▼▼
-    =================================
-    */
-    .team-grid {
-        grid-template-columns: 1fr;
+    .about-hero h1 { font-size: 2rem; }
+    .about-hero p { font-size: 1rem; }
+    .story-section { padding: 2rem; }
+    
+    .team-grid { grid-template-columns: 1fr; }
+    
+    /* Jadi 1 kolom di HP */
+    .values-grid {
+        grid-template-columns: 1fr; 
     }
 }

@@ -98,9 +98,9 @@
                         <a href="{% url 'add_to_cart' product.id %}" class="btn btn-secondary btn-cart">
                             <i class="bi bi-cart-plus"></i> Cart
                         </a>
-                        <button class="btn btn-primary btn-buy" onclick="alert('Fitur Beli segera hadir!')">
+                        <a href="{% url 'buy_now' product.id %}" class="btn btn-primary btn-buy" style="display: flex; align-items: center; justify-content: center; text-decoration: none;">
                             Beli
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

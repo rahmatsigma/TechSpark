@@ -191,6 +191,17 @@ def product_delete_view(request, pk):
         
     return render(request, 'pages/product_confirm_delete.html', {'product': product})
 
+@login_required(login_url='login')
+def buy_now_view(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+    
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+    
+    return redirect('checkout')
 
 @login_required 
 def logout_view(request):
