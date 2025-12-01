@@ -46,7 +46,7 @@ Aplikasi akan tersedia di `http://127.0.0.1:8000/`.
 
 | Nama Lengkap      | NIM         |
 | :---------------- | :---------- |
-| [Nama Anggota 1] | [NIM Anggota 1] |
+| Riski Rahmattillah Pratama | 24111814079 |
 | [Nama Anggota 2] | [NIM Anggota 2] |
 | [Nama Anggota 3] | [NIM Anggota 3] |
 | [Nama Anggota 4] | [NIM Anggota 4] |
