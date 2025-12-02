@@ -194,12 +194,15 @@ def product_delete_view(request, pk):
 @login_required(login_url='login')
 def buy_now_view(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+    # Simpan data beli langsung ke session (bukan ke keranjang)
+    request.session['buy_now'] = {
+        'product_id': product.id,
+        'product_name': product.name,
+        'product_price': float(product.price),  # Konversi Decimal ke float
+        'product_image': product.image_url,
+        'quantity': 1
+    }
     
     return redirect('checkout')
 
@@ -415,18 +418,35 @@ def order_update_view(request, pk):
 
 @login_required(login_url='login')
 def checkout_view(request):
-    try:
-        cart = Cart.objects.get(user=request.user)
-    except Cart.DoesNotExist:
-        messages.error(request, "Keranjang Anda kosong.")
-        return redirect('home')
+    # CEK APAKAH INI DARI "BELI LANGSUNG" ATAU KERANJANG NORMAL
+    buy_now_data = request.session.get('buy_now')
+    
+    if buy_now_data:
+        # === FLOW BELI LANGSUNG ===
+        product = get_object_or_404(Product, id=buy_now_data['product_id'])
+        items = [{
+            'product': product,
+            'quantity': buy_now_data['quantity'],
+            'subtotal': product.price * buy_now_data['quantity']
+        }]
+        total_price = float(product.price) * buy_now_data['quantity']
+        is_buy_now = True
+        cart = None
+    else:
+        # === FLOW KERANJANG NORMAL ===
+        try:
+            cart = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            messages.error(request, "Keranjang Anda kosong.")
+            return redirect('home')
 
-    items = cart.items.all()
-    total_price = sum(item.subtotal for item in items)
+        items = list(cart.items.all())  # CONVERT KE LIST
+        total_price = sum(item.subtotal for item in items)
+        is_buy_now = False
 
-    if items.count() == 0:
-        messages.error(request, "Anda tidak bisa checkout dengan keranjang kosong.")
-        return redirect('cart_detail')
+        if len(items) == 0:
+            messages.error(request, "Anda tidak bisa checkout dengan keranjang kosong.")
+            return redirect('cart_detail')
 
     try:
         default_address = Address.objects.get(user=request.user, is_default=True)
@@ -438,8 +458,7 @@ def checkout_view(request):
         form = AddressForm(request.POST)
         
         if form.is_valid():
-            # Ambil metode pembayaran dari POST request
-            payment_method = request.POST.get('payment_method') # <--- AMBIL INI
+            payment_method = request.POST.get('payment_method')
 
             address = form.save(commit=False)
             address.user = request.user
@@ -455,32 +474,47 @@ def checkout_view(request):
                 phone=address.phone,
                 shipping_address=f"{address.street_address}, {address.city}, {address.province}, {address.postal_code}",
                 total_price=total_price,
-                payment_method=payment_method # <--- SIMPAN INI
+                payment_method=payment_method
             )
 
-            for item in items:
+            if is_buy_now:
+                # === CREATE ORDER ITEM DARI BUY_NOW ===
+                product = get_object_or_404(Product, id=buy_now_data['product_id'])
                 OrderItem.objects.create(
                     order=order,
-                    product=item.product,
-                    product_name=item.product.name,
-                    product_price=item.product.price,
-                    quantity=item.quantity
+                    product=product,
+                    product_name=product.name,
+                    product_price=product.price,
+                    quantity=buy_now_data['quantity']
                 )
+                product.stock -= buy_now_data['quantity']
+                product.save()
+                # Hapus data buy_now dari session
+                del request.session['buy_now']
+            else:
+                # === CREATE ORDER ITEM DARI KERANJANG ===
+                for item in items:
+                    OrderItem.objects.create(
+                        order=order,
+                        product=item.product,
+                        product_name=item.product.name,
+                        product_price=item.product.price,
+                        quantity=item.quantity
+                    )
+                    
+                    item.product.stock -= item.quantity
+                    item.product.save()
                 
-                item.product.stock -= item.quantity
-                item.product.save()
-            
-            cart.items.all().delete()
+                cart.items.all().delete()
             
             messages.success(request, "Pesanan Anda berhasil dibuat!")
-            # Kirim ID order ke halaman sukses
-            return redirect('order_success', order_id=order.id) # <--- TAMBAHKAN order_id
-        # Jika form tidak valid, halaman akan di-render ulang dengan error
+            return redirect('order_success', order_id=order.id)
 
     context = {
         'items': items,
         'total_price': total_price,
-        'form': form
+        'form': form,
+        'is_buy_now': is_buy_now
     }
     return render(request, 'pages/checkout.html', context)
 
