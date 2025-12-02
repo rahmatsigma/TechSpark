@@ -1,4 +1,4 @@
-{% extends 'pages/admin_base.html' %}
+{% extends 'admin/admin_base.html' %}
 
 {% block title %}Manajemen Kategori{% endblock %}
 
@@ -8,17 +8,7 @@
         <h1>Manajemen Kategori</h1>
         <a href="{% url 'category_add' %}" class="btn btn-secondary" style="background: white; color: #4f46e5;">+ Tambah Kategori Baru</a>
     </div>
-
     <div class="admin-card">
-        
-        {% if messages %}
-            {% for message in messages %}
-            <div class="message-box {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}">
-            {{ message }}
-            </div>
-            {% endfor %}
-        {% endif %}
-
         <table class="admin-table">
             <thead>
                 <tr>

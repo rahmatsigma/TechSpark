@@ -145,7 +145,7 @@ def product_list_view(request):
 @user_passes_test(is_staff)
 def dashboard_view(request):
     products = Product.objects.all().order_by('-created_at')
-    return render(request, 'pages/dashboard.html', {'products': products})
+    return render(request, 'admin/dashboard.html', {'products': products})
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)
@@ -159,7 +159,7 @@ def product_add_view(request):
     else:
         form = ProductForm()
         
-    return render(request, 'pages/product_form.html', {'form': form, 'title': 'Tambah Produk Baru'})
+    return render(request, 'admin/product_form.html', {'form': form, 'title': 'Tambah Produk Baru'})
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)
@@ -176,7 +176,7 @@ def product_edit_view(request, pk):
     else:
         form = ProductForm(instance=product)
 
-    return render(request, 'pages/product_form.html', {'form': form, 'title': f'Edit Produk: {product.name}'})
+    return render(request, 'admin/product_form.html', {'form': form, 'title': f'Edit Produk: {product.name}'})
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)
@@ -189,7 +189,7 @@ def product_delete_view(request, pk):
         messages.success(request, 'Produk berhasil dihapus.')
         return redirect('dashboard')
         
-    return render(request, 'pages/product_confirm_delete.html', {'product': product})
+    return render(request, 'admin/product_confirm_delete.html', {'product': product})
 
 @login_required(login_url='login')
 def buy_now_view(request, product_id):
@@ -332,7 +332,7 @@ def remove_from_cart_view(request, item_id):
 def category_list_view(request):
     # 'R'ead - Tampilkan semua kategori
     categories = Category.objects.all().order_by('name')
-    return render(request, 'pages/category_list.html', {'categories': categories})
+    return render(request, 'admin/category_list.html', {'categories': categories})
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)
@@ -347,7 +347,7 @@ def category_add_view(request):
     else:
         form = CategoryForm()
         
-    return render(request, 'pages/category_form.html', {'form': form, 'title': 'Tambah Kategori Baru'})
+    return render(request, 'admin/category_form.html', {'form': form, 'title': 'Tambah Kategori Baru'})
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)
@@ -364,7 +364,7 @@ def category_edit_view(request, pk):
     else:
         form = CategoryForm(instance=category)
         
-    return render(request, 'pages/category_form.html', {'form': form, 'title': f'Edit Kategori: {category.name}'})
+    return render(request, 'admin/category_form.html', {'form': form, 'title': f'Edit Kategori: {category.name}'})
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)
@@ -380,7 +380,7 @@ def category_delete_view(request, pk):
             messages.error(request, 'Kategori ini tidak bisa dihapus karena masih digunakan oleh produk.')
         return redirect('category_list')
         
-    return render(request, 'pages/category_confirm_delete.html', {'category': category})
+    return render(request, 'admin/category_confirm_delete.html', {'category': category})
 
 
 @login_required(login_url='login')
@@ -388,7 +388,7 @@ def category_delete_view(request, pk):
 def order_list_view(request):
     # 'R'ead - Tampilkan semua pesanan, yang terbaru di atas
     orders = Order.objects.all().order_by('-created_at')
-    return render(request, 'pages/order_list.html', {'orders': orders})
+    return render(request, 'admin/order_list.html', {'orders': orders})
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)
@@ -409,7 +409,7 @@ def order_update_view(request, pk):
         'form': form,
         'order': order
     }
-    return render(request, 'pages/order_update.html', context)
+    return render(request, 'admin/order_update.html', context)
 
 
 # ==================================
