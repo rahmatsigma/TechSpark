@@ -11,7 +11,16 @@
         <p>Masuk ke akun Anda</p>
     </div>
 
-    <div class="error-message" id="errorMessage"></div>
+    <!-- Messages Alert -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem;">
+                <i class="bi {% if message.tags == 'error' %}bi-exclamation-circle{% else %}bi-check-circle{% endif %}"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
 
     <form id="loginForm" method="POST" action="{% url 'login' %}">
         {% csrf_token %}
@@ -52,7 +61,7 @@
         <a href="{% provider_login_url 'google' %}" class="social-btn">
             <i class="bi bi-google"></i> Google
         </a>
-        </div> 
+    </div> 
 
     <div class="signup-link">
         Belum punya akun? <a href="{% url 'register' %}">Daftar sekarang</a>
