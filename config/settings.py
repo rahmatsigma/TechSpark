@@ -89,12 +89,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql', # Ini berubah
-        'NAME': 'techspark_db',                   # Nama DB dari Bagian 1
-        'USER': 'techspark_user',                 # Nama User dari Bagian 1
-        'PASSWORD': 'riski2341',       # Password dari Bagian 1
-        'HOST': 'localhost',                      # Atau '127.0.0.1'
-        'PORT': '5432',                           # Port default PostgreSQL
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'techspark_db',
+        'USER': 'root',
+        'PASSWORD': '',  
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
