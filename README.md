@@ -47,6 +47,6 @@ Aplikasi akan tersedia di `http://127.0.0.1:8000/`.
 | Nama Lengkap      | NIM         |
 | :---------------- | :---------- |
 | Riski Rahmattillah Pratama | 24111814079 |
-| [Nama Anggota 2] | [NIM Anggota 2] |
+| [Dhava Gilang Ramadhan] | [24111814002] |
 | Hafiyyan Lintang Arizaki | 24111814048 |
 | [Nama Anggota 4] | [NIM Anggota 4] |
