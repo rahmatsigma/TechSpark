@@ -155,7 +155,27 @@ def product_list_view(request):
 @user_passes_test(is_staff)
 def dashboard_view(request):
     products = Product.objects.all().order_by('-created_at')
-    return render(request, 'admin/dashboard.html', {'products': products})
+    categories = Category.objects.all().order_by('name')
+    
+    # Filter by category
+    category_id = request.GET.get('category')
+    if category_id:
+        products = products.filter(category__id=category_id)
+    
+    # Filter by search
+    search_query = request.GET.get('q')
+    if search_query:
+        products = products.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+    
+    context = {
+        'products': products,
+        'categories': categories,
+        'search_query': search_query
+    }
+    return render(request, 'admin/dashboard.html', context)
 
 @login_required(login_url='login')
 @user_passes_test(is_staff)

@@ -10,12 +10,50 @@
         <a href="{% url 'product_add' %}" class="btn btn-secondary" style="background: white; color: #4f46e5;">+ Tambah Produk Baru</a>
     </div>
 
+    <!-- Filter & Search -->
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+        
+        <!-- Search Form -->
+        <form method="GET" action="{% url 'dashboard' %}" style="display: flex; gap: 0.5rem; flex: 1; min-width: 250px;">
+            <input type="text" name="q" placeholder="Cari produk..." value="{{ search_query|default:'' }}" style="
+                padding: 0.6rem 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid #ddd;
+                flex: 1;
+                font-size: 0.9rem;
+            ">
+            <button type="submit" style="
+                padding: 0.6rem 1rem;
+                background: #4f46e5;
+                color: white;
+                border: none;
+                border-radius: 0.5rem;
+                cursor: pointer;
+                font-weight: 500;
+            ">Cari</button>
+        </form>
+
+        <!-- Category Filter -->
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary" style="padding: 0.6rem 1rem; font-size: 0.9rem;">
+                Semua
+            </a>
+            {% for category in categories %}
+                <a href="?category={{ category.id }}" class="btn btn-secondary" style="padding: 0.6rem 1rem; font-size: 0.9rem;">
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="admin-card">
         <table class="admin-table">
             <thead>
                 <tr>
                     <th>Nama Produk</th>
+                    <th>Kategori</th>
                     <th>Harga</th>
+                    <th>Stok</th>
                     <th>Tgl Dibuat</th>
                     <th>Aksi</th>
                 </tr>
@@ -26,7 +64,26 @@
                     <td>
                         <strong style="color: #1f2937;">{{ product.name }}</strong>
                     </td>
+                    <td>
+                        <span style="
+                            background: #e0e7ff;
+                            color: #4f46e5;
+                            padding: 0.3rem 0.8rem;
+                            border-radius: 0.5rem;
+                            font-size: 0.85rem;
+                            font-weight: 500;
+                        ">{{ product.category.name|default:"Tanpa Kategori" }}</span>
+                    </td>
                     <td>Rp {{ product.price|intcomma }}</td>
+                    <td>
+                        {% if product.stock > 10 %}
+                            <span style="background: #d1fae5; color: #059669; padding: 0.3rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 500;">{{ product.stock }}</span>
+                        {% elif product.stock > 0 %}
+                            <span style="background: #fef3c7; color: #d97706; padding: 0.3rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 500;">{{ product.stock }}</span>
+                        {% else %}
+                            <span style="background: #fee2e2; color: #dc2626; padding: 0.3rem 0.8rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 500;">Habis</span>
+                        {% endif %}
+                    </td>
                     <td>{{ product.created_at|date:"d M Y" }}</td>
                     <td class="action-links">
                         <a href="{% url 'product_edit' product.pk %}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Edit</a>
@@ -35,7 +92,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" style="padding: 2rem; text-align: center;">Belum ada produk.</td>
+                    <td colspan="6" style="padding: 2rem; text-align: center; color: #999;">Belum ada produk.</td>
                 </tr>
                 {% endfor %}
             </tbody>
