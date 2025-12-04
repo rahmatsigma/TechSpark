@@ -29,18 +29,37 @@
             </button>
         </form>
         
-        <div class="category-filters">
-            <a href="{% url 'product_list' %}{% if search_query %}?q={{ search_query }}{% endif %}" 
-               class="btn {% if not selected_category %}btn-primary{% else %}btn-secondary{% endif %}">
-                Semua
-            </a>
+        <!-- Category & Sort Filter -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center;">
             
-            {% for category in categories %}
-                <a href="?category={{ category.id }}{% if search_query %}&q={{ search_query }}{% endif %}" 
-                   class="btn {% if selected_category.id == category.id %}btn-primary{% else %}btn-secondary{% endif %}">
-                    {{ category.name }}
+            <!-- Category Filter -->
+            <div class="category-filters" style="flex: 1; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="{% url 'product_list' %}{% if search_query %}?q={{ search_query }}{% endif %}" 
+                   class="btn {% if not selected_category %}btn-primary{% else %}btn-secondary{% endif %}" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                    Semua
                 </a>
-            {% endfor %}
+                
+                {% for category in categories %}
+                    <a href="?category={{ category.id }}{% if search_query %}&q={{ search_query }}{% endif %}" 
+                       class="btn {% if selected_category.id == category.id %}btn-primary{% else %}btn-secondary{% endif %}" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- Sort Dropdown Filter -->
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <label for="sort-select" style="color: #b9d5f0; font-weight: 500; white-space: nowrap;">Urutkan:</label>
+                <select id="sort-select" name="sort" style="padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #33c8ff; background: #141d2e; color: #fff; font-size: 0.9rem; cursor: pointer;" onchange="updateSort(this)">
+                    <option value="default" {% if sort == 'default' %}selected{% endif %}>Terbaru</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>
+                        <i class="bi bi-arrow-down"></i> Harga Terendah
+                    </option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>
+                        <i class="bi bi-arrow-up"></i> Harga Termahal
+                    </option>
+                </select>
+            </div>
         </div>
 
         <div id="loading-spinner" class="htmx-indicator" style="text-align: center; margin: 2rem 0;">
@@ -51,5 +70,24 @@
             {% include 'partials/product_grid.html' %}
         </div>
     </div>
+
+    <script>
+    function updateSort(selectElement) {
+        const sortValue = selectElement.value;
+        const searchQuery = new URLSearchParams(window.location.search).get('q') || '';
+        const categoryId = new URLSearchParams(window.location.search).get('category') || '';
+        
+        let url = '?sort=' + sortValue;
+        
+        if (searchQuery) {
+            url += '&q=' + searchQuery;
+        }
+        if (categoryId) {
+            url += '&category=' + categoryId;
+        }
+        
+        window.location.href = url;
+    }
+    </script>
 
 {% endblock %}

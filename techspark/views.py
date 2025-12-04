@@ -109,6 +109,7 @@ def product_list_view(request):
     products = Product.objects.all()
     selected_category_id = request.GET.get('category')
     search_query = request.GET.get('q')
+    sort = request.GET.get('sort', 'default')  # TAMBAH SORTING
     
     selected_category = None
     if selected_category_id:
@@ -125,15 +126,24 @@ def product_list_view(request):
         )
 
     categories = Category.objects.all()
-    products = products.order_by('-created_at')
+    
+    # === SORTING LOGIC ===
+    if sort == 'price_asc':
+        products = products.order_by('price')  # Harga terendah
+    elif sort == 'price_desc':
+        products = products.order_by('-price')  # Harga termahal
+    else:
+        products = products.order_by('-created_at')  # Default: terbaru
 
     context = {
         'products': products,
         'categories': categories,
         'selected_category': selected_category,
         'search_query': search_query,
+        'sort': sort,  # PASS SORT KE TEMPLATE
     }
-        # HTMX
+    
+    # HTMX
     if request.headers.get('HX-Request'):
         return render(request, 'partials/product_grid.html', context)
     
